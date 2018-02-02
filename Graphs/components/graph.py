@@ -3,18 +3,19 @@ Created on Dec 13, 2017
 
 @author: iko
 '''
-#from platform import node
+from itertools import count
 
 class Graph:
     '''
     classdocs
     '''
-    def __init__(self, id, nodes = None, edges = None):
+    ids = count(0)
+    def __init__(self, nodes = None, edges = None):
 
         '''
         Constructor
         '''
-        self.id     = id
+        self.id = next(self.ids)
         self.nodes  = (set(), nodes)[nodes != None]
         self.edges  = (set(), edges)[edges != None]
 
@@ -68,45 +69,45 @@ class Graph:
             edgeCount -= 1
         
         
-class Edge:
-    '''
-    classdocs
-    '''
-
-    def __init__(self, fromNode, toNode):
+    class Edge:
         '''
-        Constructor
+        classdocs
         '''
-        self.id         = (fromNode.get_id(), toNode.get_id())
-        self.fromNode   = fromNode
-        self.toNode     = toNode
-        
-    def __str__(self):
-        return str(self.id)
     
-    def get_from_node(self):
-        return self.fromNode
-    
-    def get_to_node(self):
-        return self.toNode
-    
-    def get_id(self):
-        return self.id
+        def __init__(self, fromNode, toNode):
+            '''
+            Constructor
+            '''
+            self.id         = (fromNode.get_id(), toNode.get_id())
+            self.fromNode   = fromNode
+            self.toNode     = toNode
             
-class Node:
-    '''
-    classdocs
-    '''
-
-    def __init__(self, id = None):
-        '''
-        Constructor
-        '''
-        self.id = id
+        def __str__(self):
+            return str(self.id)
         
-    def __str__(self):
-        return str(self.id)
+        def get_from_node(self):
+            return self.fromNode
         
-    def get_id(self):
-        return self.id
-    
+        def get_to_node(self):
+            return self.toNode
+        
+        def get_id(self):
+            return self.id
+                
+    class Node:
+        '''
+        classdocs
+        '''
+        
+        ids = count(0)
+        def __init__(self):
+            '''
+            Constructor
+            '''
+            self.id = next(self.ids)
+            
+        def __str__(self):
+            return str(self.id)
+            
+        def get_id(self):
+            return self.id
