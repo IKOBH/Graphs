@@ -4,8 +4,8 @@ Created on Jan 27, 2018
 @author: iko
 '''
 import unittest
-from components import graph
 from itertools import count
+from components import graph
 
 class TestGraph(unittest.TestCase):
     
@@ -14,10 +14,10 @@ class TestGraph(unittest.TestCase):
         #super(TestGraph, cls).setUpClass()(self):
         cls.graph0  = graph.Graph()
         cls.graph1  = graph.Graph()
-        cls.node0   = graph.Graph.Node()
-        cls.node1   = graph.Graph.Node()
-        cls.edge01  = graph.Graph.Edge(cls.node0,cls.node1)
-        cls.edge10  = graph.Graph.Edge(cls.node1,cls.node0)
+        cls.node0   = graph.Node()
+        cls.node1   = graph.Node()
+        cls.edge01  = graph.Edge(cls.node0,cls.node1)
+        cls.edge10  = graph.Edge(cls.node1,cls.node0)
                 
     def test_create_node(self):
         self.assertEqual(0, self.node0.get_id(), "Error: Couldn't create a simple node.")
