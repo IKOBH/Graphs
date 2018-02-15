@@ -29,7 +29,7 @@ def generate_graph(self, node_count = 0, edge_count = 0):
         self.add_directed_edge() #TODO: create new edge
         edge_count -= 1
 
-class Graph:
+class Graph(object):
     '''
     classdocs
     '''
@@ -51,226 +51,182 @@ class Graph:
     def __str__(self):
         return str(self.id)
     
+    @property
+    def nodes_data(self):
+        '''
+        Return graph's node's data as a set.
+        '''
+        return set([node.data for node in self.nodes])
+    
+    @property    
+    def edges_data(self):
+        '''
+        Return graph's edge's data as a set of tuples (exit node_data, enter_node_data).
+        '''
+        return set([(edge.exit_node.data, edge.enter_node.data) for edge in self.edges])
+    
     def get_node_by_obj(self, obj):
         '''
-        Return node from self.nodes s.t. node.data = obj and obj != None, if exists.
-         Else return None.
+        Return node from self.nodes s.t. node.data = obj, if exists. Else return None.
         
         :param obj: any object. 
         '''
-        for node in iter(self.nodes):
-            if node.data == obj and obj != None:
+        for node in self.nodes:
+            if node.data == obj:
                 return node
         
         return None
     
-    def get_exit_edges(self, node):
+    def get_edge_by_objs(self, exit_obj, enter_obj):
         '''
-        Return generator for edges from self.edges s.t. edge.data[0] = node, if exists.
+        Return edge from self.edges s.t. edge.exit_node.data = exit.obj & edge.enter_node.data = enter.obj, if exists. Else return None.
         
-        :param node: any object.
+        :param obj: any object. 
         '''
-        for edge in iter(self.edges):
-            if edge.exit_node == node:
-                yield edge
-                
-    def get_enter_edges(self, node):
-        '''
-        Return generator for edges from self.edges s.t. edge.data[1] = node, if exists.
+        for edge in self.edges:
+            if exit_obj == edge.exit_node.data and enter_obj == edge.enter_node.data:
+                return edge
         
-        :param node: any object.
-        '''
-        for edge in iter(self.edges):
-            if edge.enter_node == node:
-                yield edge
-                
-    def get_edges(self, node):
-        '''
-        Return generator for edges from self.edges s.t. edge.data[0] = node or edge.data[1] = node, if exists.
-        
-        :param node: any object.
-        '''
-        for edge in iter(self.edges):
-            if edge.exit_node == node or edge.enter_node == node:
-                yield edge
+        return None                   
     
     def add_node(self, obj):
         '''
-        Add a new node created from obj, only if:
-        * obj node doesn't already exists.
-        * obj is not a node in graph.
+        Add a new node with obj as it's data, if not exists.
         
         :param obj: any object.
-        :postcondition: (lambda ret: isinstance(ret) = Node)
+        :return: node. type(node) = Node
         '''
-        node = obj if isinstance(obj, Node) else Node(obj)#TODO: Last change. Fix doc
-        self.attach_node(node)
+        node = self.get_node_by_obj(obj)
+        if node == None:
+            node = Node(obj) 
+            self.nodes.add(node)
+        
+        return node 
     
-    def add_directed_edge(self, exit_obj, enter_obj, parallel = False):
+    def add_directed_edge(self, exit_obj, enter_obj):
         '''
-        Add a new edge object from exit_obj to enter_obj according to:
-        *If (exit_obj,enter_obj) edge already exists in self and:
-            * parallel = True, Add a new parallel (exit_obj,enter_obj) edge.
-            * parallel = False, do nothing. 
-        *If exit_obj, enter_obj or both are Node objects, but not part of self, attach relevant nodes to graph, and add (exit_obj,enter_obj) edge.
-        *If exit_obj, enter_obj or both aren't Node objects, Create & Add relevant Node objects, and add (exit_obj,enter_obj) edge.
+        Add a new edge with exit_obj as it's exit node's data & enter_obj as it's enter node's data, if not exists.
         
         :param exit_obj: any object.
         :param enter_obj: any object.
-        :note: for obj = exit_obj\enter_obj, new node won't be added if Node(obj) already exists in graph.
+        :return: edge. type(edge) = Edge
         '''
+        edge = self.get_edge_by_objs(exit_obj, enter_obj)
+        if edge == None:
+            exit_node = self.add_node(exit_obj)
+            enter_node = self.add_node(enter_obj)
+            edge = Edge(exit_node, enter_node)
+            self.edges.add(edge)
+            exit_node.exit_edges.add(edge)
+            enter_node.enter_edges.add(edge)            
             
-        exit_node = exit_obj if isinstance(exit_obj, Node) else self.get_node_by_obj(exit_obj)
-        exit_node = Node(exit_obj) if exit_node == None else exit_node
-         
-        enter_node = enter_obj if isinstance(enter_obj, Node) else self.get_node_by_obj(enter_obj)
-        enter_node = Node(enter_obj) if enter_node == None else enter_node
-        
-        self.attach_edge(Edge(exit_node, enter_node), parallel)
-        
+        return edge
+            
     def add_nodes_from(self, objs):
         '''
-        Add objs to self.nodes.
+        Add new nodes with objects from objs as their data, if not exist.
         
         :param objs: iterable of any type.
+        :return: set(nodes). for node in nodes, type(node) = Node
         '''
-        for obj in objs:
-            self.add_node(obj)
+        node_bunch = set()
+        
+        for obj in set(objs):
+            node_bunch.add(self.add_node(obj))
+        
+        return node_bunch
     
-    def add_edges_from(self, objs, parallel = False):
+    def add_edges_from(self, objs):
         '''
-        Add objs to self.edges.
+        Add new edges with objects from objs as their data, if not exist.
         
-        :param objs: iterable of Tuple or Edge type. Each tuple has the form of (exitObj, enterObj).
+        :param objs: iterable of Tuple type. Each tuple has the form of (exitObj, enterObj).
+        :return: set(edges). for edge in edges, type(edge) = Edge
         '''
-        for obj in objs:                
-            if isinstance(obj, tuple):
-                self.add_directed_edge(obj[0], obj[1], parallel)
-            elif isinstance(obj, Edge):
-                self.attach_edge(obj, parallel)
-            else:
-                raise TypeError("Tuple or Edge object expected, got %s" % obj.__class__.__name__)
+        edge_bunch = set()
         
-    def attach_node(self, node):
+        for obj in set(objs):                
+            if not isinstance(obj, tuple):
+                raise TypeError("Tuple object expected, got %s" % obj.__class__.__name__)
+
+            edge_bunch.add(self.add_directed_edge(obj[0], obj[1]))
+        
+        return edge_bunch
+        
+    def _remove_edge(self, edge):
         '''
-        Attach node to self.nodes, only if node.data is not an object in self.nodes.
+        Remove edge from self.edges. 
         
-        :param node: type Node.
-        '''
-        if not isinstance(node, Node):
-            raise TypeError("Node object expected, got %s" % node.__class__.__name__)
-        
-        if self.get_node_by_obj(node.data) == None:
-            self.nodes.add(node)               
-    
-    def attach_edge(self, edge, parallel = False):
-        '''
-        Attach edge to self.edges. Verify edge's nodes are graph nodes.
-        
-        :param edge: type Edge.
-        :precondition: type(edge[0]) = type(edge[1]) = Node
-        '''
-        if not isinstance(edge, Edge):
-            raise TypeError("Edge object expected, got %s" % edge.__class__.__name__)
-        
-        if not parallel and edge.exit_node in iter(edge.exit_node for edge in self.edges) and edge.enter_node in iter(edge.enter_node for edge in self.edges):#TODO: Improvr memory usage
-            print("(%s,%s) already exists in graph edges." % (edge.exit_node, edge.enter_node))
-            return
-        
-        self.attach_node(edge.exit_node)
-        self.attach_node(edge.enter_node)
-        
-        self.edges.add(edge)
-        edge.exit_node.exit_degree += 1
-        edge.enter_node.enter_degree += 1     
-    
-    def attach_edges_from(self, edges, parallel = False):
-        '''
-        Attach edges to self.edges.
-        
-        :param edges: iterable of type Edge.
-        '''
-        for edge in edges:
-            self.attach_edge(edge, parallel)
-                      
-    def remove_node(self, node):
-        '''
-        Remove node from self.nodes. Raises KeyError if not present.
-        
-        :param node: type Node.
-        '''
-        if not isinstance(node, Node):
-            raise TypeError("Node object expected, got %s" % node.__class__.__name__)
-        else:
-            self.nodes.remove(node)
-            for edge in self.get_edges(node):
-                self.remove_edge(edge)
-    
-    def remove_edge(self, edge):
-        '''
-        Remove edge from self.edges. Raises KeyError if not present.
-        
+        Raises TypeError if edge not of Edge type.
+        Raises KeyError if not present.
         :param edge: type Edge.
         '''
         if not isinstance(edge, Edge):
             raise TypeError("Edge object expected, got %s" % edge.__class__.__name__)
         else:
+            edge.exit_node.exit_edges.remove(edge)
+            edge.enter_node.enter_edges.remove(edge)
             self.edges.remove(edge)
-            edge.exit_node.exit_degree -= 1
-            edge.enter_node.enter_degree -= 1
     
-    def remove_edges_from(self, edges):
+    def _remove_edges_from(self, edges):
         '''
-        Remove edges to self.edges.
+        Remove edges from self.edges.
         
+        Raises TypeError if edge not of Edge type.
+        Raises KeyError if not present.
         :param edges: iterable of type Edge.
         '''
-        for edge in edges:
-            self.remove_edge(edge)
+        for edge in set(edges):
+            self._remove_edge(edge)
             
     def del_node(self, obj):
         '''
-        Delete node containing obj, if:
-        * node(obj) exists.
-        * obj is a node in graph.
+        Delete node with data = obj, if exists.
         
         :param obj: any object.
+        :return: deleted node. Type Node.
         '''
-        node = obj if isinstance(obj, Node) else self.get_node_by_obj(obj)
+        node = self.get_node_by_obj(obj)
         if node != None:
-            self.remove_node(node)
-        else:
-            print("obj %s is not a node in graph" % obj)
+            self._remove_edges_from(node.adjacencies_edges)
+            self.nodes.discard(node)
+            
+        return node
     
     def del_edge(self, exit_obj, enter_obj):
         '''
-        Delete all parallel edges between (exit_obj, enter_obj).
+        Delete edge between exit node with data exit_obj & enter node with data enter_obj.
         
-        :param obj: any object.
+        :param exit_obj: any object.
+        :param enter_obj: any object.
+        :return: deleted edge. Type Edge.
         '''
-        self.remove_edges_from(iter(edge for edge in self.edges if
-                                     edge.exit_node == self.get_node_by_obj(exit_obj) and
-                                      edge.enter_node == self.get_node_by_obj(enter_obj)))
+        edge = self.get_edge_by_objs(exit_obj, enter_obj)
+        if edge != None:
+            self._remove_edge(edge)
+            
+        return edge
     
     def del_nodes_from(self, objs):
         '''
-        Remove objs from self.nodes.
+        Delete nodes with data = obj for each obj in objs, if exists.
+        Delete objs from self.nodes.
         
         :param objs: iterable of any type.
+        :return: deleted nodes. Type Node set.
         '''
-        for obj in objs:
-            self.del_node(obj)
-    
+        return set(self.del_node(obj) for obj in set(objs))
+            
     def del_edges_from(self, objs):
         '''
-        Remove objs from self.edges.
-        
-        :param objs: iterable of any type.
+        Delete edges between exit node with data exit_obj & enter node with data enter_obj, for each (exitObj, enterObj) tuple.
+
+        :param objs: iterable of Tuple type. Each tuple has the form of (exitObj, enterObj).        
+        :return: deleted edges. Type Edge set.
         '''
-        for obj in objs:
-            self.del_edge(obj)
-        
-class Edge:
+        return set(self.del_edge(obj[0], obj[1]) for obj in set(objs))
+            
+class Edge(object):
     '''
     classdocs
     '''
@@ -288,7 +244,7 @@ class Edge:
     def __str__(self):
         return str(self.id)
 
-class Node:
+class Node(object):
     '''
     classdocs
     '''
@@ -301,14 +257,35 @@ class Node:
         :invariant: self.full_degree >= 0
         '''
         self.id = id(self)
-        self.data = obj
-        self.exit_degree = 0
-        self.enter_degree = 0
+        self.data = self.id if obj == None else obj
+        self.exit_edges = set()
+        self.enter_edges = set()
         
     def __str__(self):
         return str(self.id)
-
-    def _get_full_degree(self):
-        return self.exit_degree + self.enter_degree
     
-    full_degree = property(_get_full_degree)
+    @property            
+    def adjacencies_edges(self):
+        '''
+        Return node adjacencies edges, if exists.
+        '''
+        return self.exit_edges.union(self.enter_edges)
+    
+    @property
+    def exit_degree(self):
+        '''
+        Return node exit degree.
+        '''
+        return len(self.exit_edges)
+    @property
+    def enter_degree(self):
+        '''
+        Return node enter degree.
+        '''
+        return len(self.enter_edges)
+    @property
+    def degree(self):
+        '''
+        Return node full degree.
+        '''
+        return self.exit_degree + self.enter_degree
