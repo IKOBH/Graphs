@@ -105,11 +105,11 @@ class Graph(object):
     
     def add_directed_edge(self, exit_obj, enter_obj):
         '''
-        Add a new edge with exit_obj as it's exit node's data & enter_obj as it's enter node's data, if not exists.
+        Add a new directed edge with exit_obj as it's exit node's data & enter_obj as it's enter node's data, if not exists.
         
         :param exit_obj: any object.
         :param enter_obj: any object.
-        :return: edge. type(edge) = Edge
+        :return: edge. type(edge) = Edge.
         '''
         edge = self.get_edge_by_objs(exit_obj, enter_obj)
         if edge == None:
@@ -121,6 +121,19 @@ class Graph(object):
             enter_node.enter_edges.add(edge)            
             
         return edge
+    
+    def add_undirected_edge(self, obj1, obj2):
+        '''
+        Add a new undirected edge with obj1 & obj2 as it's nodes data, if not exists.
+        
+        :param obj1: any object.
+        :param obj2: any object.
+        :return: set(edge,edge). type(edge) = Edge.
+        '''
+        edge1 = self.add_directed_edge(obj1, obj2)
+        edge2 = self.add_directed_edge(obj2, obj1)            
+            
+        return set((edge1,edge2))
             
     def add_nodes_from(self, objs):
         '''
