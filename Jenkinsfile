@@ -3,8 +3,10 @@ pipeline {
     docker {
       image 'qnib/pytest'
       args '-v /home/iko/git/:/test-reports'
-    }
-    
+    }    
+  }
+  triggers {
+     cron('0 22 * * *')
   }
   stages {
     stage('Build') {
