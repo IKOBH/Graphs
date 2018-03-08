@@ -1,7 +1,7 @@
 '''
 Created on Jan 27, 2018
 
-@author: iko
+:author: iko
 '''
 import pytest
 from components import graph

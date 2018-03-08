@@ -1,7 +1,7 @@
 '''
 Created on Dec 13, 2017
 
-@author: iko
+:author: iko
 '''
 from itertools import repeat
 
