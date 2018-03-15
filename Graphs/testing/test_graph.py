@@ -116,6 +116,7 @@ class TestEdge(object):
     @classmethod
     def teardown_class(cls):
         cls.node0 = None
+
         cls.node1 = None
         cls.edge01 = None
         cls.edge12 = None
@@ -127,10 +128,12 @@ class TestGraph(object):
         self.graph0 = graph.Graph()
         self.graph1 = graph.Graph({0, 1, 2}, {(0, 1), (1, 0)})
         self.graph2 = graph.Graph(None, {(0,), (0, 1, 2), (2, 3, 4, 'node')}, nickname='iko')
+        self.graph3 = graph.Graph(None, {(0, 1), (2, 3)}, {'color':'white'}, {'weight':2}, nickname='iko3')
 
         self.n0_g1 = self.graph1.get_node_by_name(0)
         self.n1_g1 = self.graph1.get_node_by_name(1)
         self.n2_g1 = self.graph1.get_node_by_name(2)
+        self.e2_g1 = self.graph1.get_edge_by_names(0, 1)
 
         self.n0_g2 = self.graph2.get_node_by_name(0)
         self.n1_g2 = self.graph2.get_node_by_name(1)
@@ -138,16 +141,20 @@ class TestGraph(object):
         self.n3_g2 = self.graph2.get_node_by_name(3)
         self.n4_g2 = self.graph2.get_node_by_name(4)
         self.node_g2 = self.graph2.get_node_by_name('node')
-
-        self.e2_g1 = self.graph1.get_edge_by_names(0, 1)
-
         self.e1_g2 = self.graph2.get_edge_by_names(0)
         self.e3_g2 = self.graph2.get_edge_by_names(0, 1, 2)
         self.e4_g2 = self.graph2.get_edge_by_names(2, 3, 4, 'node')
 
+        self.n0_g3 = self.graph3.get_node_by_name(0)
+        self.n1_g3 = self.graph3.get_node_by_name(1)
+        self.n2_g3 = self.graph3.get_node_by_name(2)
+        self.n3_g3 = self.graph3.get_node_by_name(3)
+        self.e01_g3 = self.graph3.get_edge_by_names(0, 1)
+        self.e23_g3 = self.graph3.get_edge_by_names(2, 3)
+
     def test_create_graph(self):
-        assert self.graph0.id is not self.graph1.id is not self.graph2.id
-        assert self.graph0.id != self.graph1.id != self.graph2.id
+        assert self.graph0.id is not self.graph1.id is not self.graph2.id is not self.graph3.id
+        assert self.graph0.id != self.graph1.id != self.graph2.id != self.graph3.id
 
         assert self.graph0.nodes == set()
         assert self.graph0.edges == set()
@@ -164,6 +171,12 @@ class TestGraph(object):
         assert len(self.graph2.nodes) == 6
         assert len(self.graph2.edges) == 3
         assert self.graph2.nickname == 'iko'
+
+        assert self.graph3.nodes == {self.n0_g3, self.n1_g3, self.n2_g3, self.n3_g3}
+        assert self.graph3.edges == {self.e01_g3, self.e23_g3}
+        assert len(self.graph3.nodes) == 4
+        assert len(self.graph3.edges) == 2
+        assert self.graph3.nickname == 'iko3'
 
     def test_nodes_data(self):
         assert self.graph0.nodes_data.keys() == set()
@@ -182,6 +195,12 @@ class TestGraph(object):
                                           4:{'name': 4, 'id': self.n4_g2.id, 'edges': self.n4_g2.edges},
                                           'node':{'name': 'node', 'id': self.node_g2.id, 'edges': self.node_g2.edges}}
 
+        assert self.graph3.nodes_data.keys() == {0, 1, 2, 3}
+        assert self.graph3.nodes_data == {0:{'name': 0, 'id': self.n0_g3.id, 'edges': self.n0_g3.edges, 'color': 'white'},
+                                          1:{'name': 1, 'id': self.n1_g3.id, 'edges': self.n1_g3.edges, 'color': 'white'},
+                                          2:{'name': 2, 'id': self.n2_g3.id, 'edges': self.n2_g3.edges, 'color': 'white'},
+                                          3:{'name': 3, 'id': self.n3_g3.id, 'edges': self.n3_g3.edges, 'color': 'white'}}
+
     def test_edges_data(self):
         assert self.graph0.edges_data.keys() == set()
         assert self.graph0.edges_data == {}
@@ -193,6 +212,10 @@ class TestGraph(object):
         assert self.graph2.edges_data == {frozenset({0}): {'id': self.e1_g2.id, 'nodes': self.e1_g2.nodes},
                                           frozenset({0, 1, 2}): {'id': self.e3_g2.id, 'nodes': self.e3_g2.nodes},
                                           frozenset({2, 3, 4, "node"}): {'id': self.e4_g2.id, 'nodes': self.e4_g2.nodes}}
+
+        assert self.graph3.edges_data.keys() == {frozenset({0, 1}), frozenset({2, 3})}
+        assert self.graph3.edges_data == {frozenset({0, 1}): {'id': self.e01_g3.id, 'nodes': self.e01_g3.nodes, 'weight': 2},
+                                          frozenset({2, 3}): {'id': self.e23_g3.id, 'nodes': self.e23_g3.nodes, 'weight': 2}}
 
     def test_data(self):
         assert self.graph0.data == {'nodes' : {}, 'edges' : {}}

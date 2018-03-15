@@ -89,13 +89,15 @@ class Graph(_Attr_Object):
     classdocs
     '''
 
-    def __init__(self, nodes=None, edges=None, **attrs):
-        # TODO: Add nodes_attr & edges_attr to constructor.
+    def __init__(self, nodes=None, edges=None, nodes_attrs=None, edges_attrs=None, **attrs):
         '''
         Constructor
 
-        :param nodes: iterable of Hashable type.
-        :param edges: iterable of iterable of Hashable type.
+        :param nodes: graph's nodes. iterable of Hashable type.
+        :param edges: graph's edges.iterable of iterable of Hashable type.
+        :param nodes_attrs: nodes default attributes. iterable of key-value type.
+        :param edges_attrs: edges default attributes. iterable of key-value type.
+        :param **attrs: graph's default attributes.
         '''
         _Attr_Object.__init__(self, **attrs)
         self.nodes = set()
@@ -103,9 +105,11 @@ class Graph(_Attr_Object):
 
         nodes = set() if nodes is None else nodes
         edges = set() if edges is None else edges
+        nodes_attrs = {} if nodes_attrs is None else nodes_attrs
+        edges_attrs = {} if edges_attrs is None else edges_attrs
 
-        self.add_nodes_from(nodes)
-        self.add_edges_from(edges)
+        self.add_nodes_from(nodes, **nodes_attrs)
+        self.add_edges_from(edges, nodes_attrs, **edges_attrs)
 
     def __str__(self):
         return str(self.id)
@@ -113,27 +117,21 @@ class Graph(_Attr_Object):
     @property
     def nodes_data(self):
         '''
-        Return graph's node's data.
-        
-        :return: type = dictionary valued dictionary.
+        :return: graph's node's data. type = dictionary valued dictionary.
         '''
         return {node.name: node.data for node in self.nodes}
 
     @property
     def edges_data(self):
         '''
-        Return graph's edge's data.
-        
-        :return: type = dictionary valued dictionary.
+        :return: graph's edge's data. type = dictionary valued dictionary.
         '''
         return {frozenset(node.name for node in edge.nodes): edge.data for edge in self.edges}
 
     @property
     def data(self):
         '''
-        Return graph's data as a dictionary.
-        
-        :return: type = dictionary valued dictionary.
+        :return: graph's data. type = dictionary valued dictionary.
         '''
         return {'nodes' : self.nodes_data, 'edges' : self.edges_data}
 
@@ -182,20 +180,21 @@ class Graph(_Attr_Object):
 
         return node
 
-    def add_edge(self, *names, **attrs):  # TODO: Add multi edge support.
+    def add_edge(self, *names, nodes_attrs={}, **attrs):  # TODO: Add multi edge support.
         '''
         Add a new edge with names as its nodes data & attrs as its attributes.
         
         Add edge only if not exists. Distinguish between attrs & undirected edges.
 
         :todo: Add parallel edges support.
-        :param names: any object.
+        :param names: sequence of Hashable.
+        :param nodes_attrs: iterable of key-value pairs.
         :param attrs: sequence of key-value pairs.
         :return: edge. type(edge) = _Edge.
         '''
         edge = self.get_edge_by_names(*names)
         if edge is None:
-            nodes = self.add_nodes_from(names)
+            nodes = self.add_nodes_from(names, **nodes_attrs)
             edge = _Edge(nodes, **attrs)
             self.edges.add(edge)
 
@@ -216,15 +215,17 @@ class Graph(_Attr_Object):
         '''
         return {self.add_node(name, **attrs) for name in names}
 
-    def add_edges_from(self, names_iterable, **attrs):
+    def add_edges_from(self, names_iterable, nodes_attrs={}, **attrs):
+        # TODO: Check names_iterable=None, nodes_attrs=None
         '''
         Add new edges with objects from names_iterable as their data, if not exist.
 
         :param names_iterable: iterable of Hashable type.
+        :param nodes_attrs: iterable of key-value pairs.
         :param attrs: iterable of sequences of key-value pairs.
         :return: set(edges). for edge in edges, type(edge) = _Edge
         '''
-        return {self.add_edge(*names, **attrs) for names in names_iterable}
+        return {self.add_edge(*names, nodes_attrs=nodes_attrs, **attrs) for names in names_iterable}
 
     def _remove_edge(self, edge):
         '''
