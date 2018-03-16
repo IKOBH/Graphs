@@ -185,7 +185,7 @@ class Graph(_Attr_Object):
 
         return node
 
-    def add_edge(self, *names, nodes_attrs={}, **attrs):  # TODO: Add multi edge support.
+    def add_edge(self, *names, nodes_attrs=None, **attrs):  # TODO: Add multi edge support.
         '''
         Add a new edge with names as its nodes data & attrs as its attributes.
         
@@ -193,14 +193,13 @@ class Graph(_Attr_Object):
 
         :todo: Add parallel edges support.
         :param names: sequence of Hashable.
-        :param nodes_attrs: iterable of key-value pairs.
+        :param nodes_attrs: iterable of key-value pairs or None.
         :param attrs: sequence of key-value pairs.
         :return: edge. type(edge) = _Edge.
         '''
-        if nodes_attrs == None:
-            raise ValueError("nodes_attrs must be a mapping, not NoneType")
         edge = self.get_edge_by_names(*names)
         if edge is None:
+            nodes_attrs = {} if nodes_attrs is None else nodes_attrs
             nodes = self.add_nodes_from(names, **nodes_attrs)
             edge = _Edge(nodes, **attrs)
             self.edges.add(edge)
