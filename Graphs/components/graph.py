@@ -49,19 +49,24 @@ class _Attr_Object(object):
     @property
     def data(self):
         '''
-        Return Object's data.
+        :return: Object's data.
         '''
         return self.__dict__
 
     def set_attr(self, attr, val):
         '''
-        Add or Change node's attributes.
+        Set node's attribute 'attr' to val.
+        
+        :param attr:
+        :param val:
         '''
         setattr(self, attr, val)
 
     def set_attrs(self, **attrs):
         '''
-        Add or Change node's attributes.
+        Set node's attributes.
+        
+        :param **attr:  
         '''
         for attr, val in attrs.items():
             self.set_attr(attr, val)
@@ -95,8 +100,8 @@ class Graph(_Attr_Object):
 
         :param nodes: graph's nodes. iterable of Hashable type.
         :param edges: graph's edges.iterable of iterable of Hashable type.
-        :param nodes_attrs: nodes default attributes. iterable of key-value type.
-        :param edges_attrs: edges default attributes. iterable of key-value type.
+        :param nodes_attrs: nodes default attributes. iterable of key-value type or None.
+        :param edges_attrs: edges default attributes. iterable of key-value type or None.
         :param **attrs: graph's default attributes.
         '''
         _Attr_Object.__init__(self, **attrs)
@@ -173,7 +178,7 @@ class Graph(_Attr_Object):
         '''
         node = self.get_node_by_name(name)
         if node is None:
-            node = _Node(name=name, ** attrs)
+            node = _Node(name=name, **attrs)
             self.nodes.add(node)
         else:
             node.set_attrs(**attrs)
@@ -192,6 +197,8 @@ class Graph(_Attr_Object):
         :param attrs: sequence of key-value pairs.
         :return: edge. type(edge) = _Edge.
         '''
+        if nodes_attrs == None:
+            raise ValueError("nodes_attrs must be a mapping, not NoneType")
         edge = self.get_edge_by_names(*names)
         if edge is None:
             nodes = self.add_nodes_from(names, **nodes_attrs)
@@ -216,7 +223,6 @@ class Graph(_Attr_Object):
         return {self.add_node(name, **attrs) for name in names}
 
     def add_edges_from(self, names_iterable, nodes_attrs={}, **attrs):
-        # TODO: Check names_iterable=None, nodes_attrs=None
         '''
         Add new edges with objects from names_iterable as their data, if not exist.
 
