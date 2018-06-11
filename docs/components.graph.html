@@ -1,0 +1,389 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>components.graph module &#8212; Graphs 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="testing package" href="testing.html" />
+    <link rel="prev" title="components package" href="components.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="testing.html" title="testing package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="components.html" title="components package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Graphs 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >components</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="components.html" accesskey="U">components package</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-components.graph">
+<span id="components-graph-module"></span><h1>components.graph module<a class="headerlink" href="#module-components.graph" title="Permalink to this headline">¶</a></h1>
+<p>Created on Dec 13, 2017</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">iko</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="components.graph.Graph">
+<em class="property">class </em><code class="descclassname">components.graph.</code><code class="descname">Graph</code><span class="sig-paren">(</span><em>nodes=None</em>, <em>edges=None</em>, <em>nodes_attrs=None</em>, <em>edges_attrs=None</em>, <em>**attrs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">components.graph._AttrObject</span></code></p>
+<p>classdocs</p>
+<dl class="method">
+<dt id="components.graph.Graph.add_edge">
+<code class="descname">add_edge</code><span class="sig-paren">(</span><em>*names</em>, <em>nodes_attrs=None</em>, <em>**attrs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.add_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.add_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new edge with names as its nodes data &amp; attrs as its attributes.</p>
+<p>Add edge only if not exists. Distinguish between attrs &amp; undirected edges.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Todo:</th><td class="field-body"><p class="first">Add parallel edges support.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>names</strong> – sequence of Hashable.</li>
+<li><strong>nodes_attrs</strong> – iterable of key-value pairs or None.</li>
+<li><strong>attrs</strong> – sequence of key-value pairs.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">edge. type(edge) = _Edge.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="components.graph.Graph.add_edges_from">
+<code class="descname">add_edges_from</code><span class="sig-paren">(</span><em>names_iterable</em>, <em>nodes_attrs={}</em>, <em>**attrs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.add_edges_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.add_edges_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add new edges with objects from names_iterable as their data, if not exist.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>names_iterable</strong> – iterable of Hashable type.</li>
+<li><strong>nodes_attrs</strong> – iterable of key-value pairs.</li>
+<li><strong>attrs</strong> – iterable of sequences of key-value pairs.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">set(edges). for edge in edges, type(edge) = _Edge</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="components.graph.Graph.add_node">
+<code class="descname">add_node</code><span class="sig-paren">(</span><em>name</em>, <em>**attrs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.add_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.add_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new node with name as it’s data, if not exists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> – Hashable object.</li>
+<li><strong>attrs</strong> – sequence of key-value pairs.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">node. type(node) = _Node</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="components.graph.Graph.add_nodes_from">
+<code class="descname">add_nodes_from</code><span class="sig-paren">(</span><em>names</em>, <em>**attrs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.add_nodes_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.add_nodes_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add new nodes with objects from names as their data, if not exist.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>names</strong> – iterable of Hashable type.</li>
+<li><strong>attrs</strong> – sequences of key-value pairs.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">set(nodes). for node in nodes, type(node) = _Node</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="components.graph.Graph.data">
+<code class="descname">data</code><a class="headerlink" href="#components.graph.Graph.data" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">graph’s data. type = dictionary valued dictionary.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="components.graph.Graph.del_edge">
+<code class="descname">del_edge</code><span class="sig-paren">(</span><em>*names</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.del_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.del_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete edge with ‘names’ nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>names</strong> – Hashable object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">deleted edge. Type _DiEdge.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="components.graph.Graph.del_edges_from">
+<code class="descname">del_edges_from</code><span class="sig-paren">(</span><em>names_iterable</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.del_edges_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.del_edges_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete edges.</p>
+<p>Delete edges between nodes with data = names from names_iterable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>names_iterable</strong> – iterable of Hashable type.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">deleted edges. Type _DiEdge set.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="components.graph.Graph.del_node">
+<code class="descname">del_node</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.del_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.del_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete node with data = name, if exists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> – any object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">deleted node. Type _Node.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="components.graph.Graph.del_nodes_from">
+<code class="descname">del_nodes_from</code><span class="sig-paren">(</span><em>names</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.del_nodes_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.del_nodes_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete nodes with name in names, if exists.
+Delete names from self.nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>names</strong> – iterable of Hashable type.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">deleted nodes. Type _Node set.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="components.graph.Graph.edges_data">
+<code class="descname">edges_data</code><a class="headerlink" href="#components.graph.Graph.edges_data" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">graph’s edge’s data. type = dictionary valued dictionary.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="components.graph.Graph.get_edge_by_names">
+<code class="descname">get_edge_by_names</code><span class="sig-paren">(</span><em>*names</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.get_edge_by_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.get_edge_by_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return edge from self.edges.</p>
+<p>If exists return edge s.t data of edge.nodes = obj0 &amp; names.
+Else return None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>names</strong> – any object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Attention:</th><td class="field-body">Graph should not contain an edge object with empty set of nodes.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="components.graph.Graph.get_node_by_name">
+<code class="descname">get_node_by_name</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.get_node_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.get_node_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return node from self.nodes s.t. node.data = name, if exists. Else return None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> – any object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="components.graph.Graph.nodes_data">
+<code class="descname">nodes_data</code><a class="headerlink" href="#components.graph.Graph.nodes_data" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">graph’s node’s data. type = dictionary valued dictionary.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="components.graph.generate_edges">
+<code class="descclassname">components.graph.</code><code class="descname">generate_edges</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#generate_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.generate_edges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="components.graph.generate_graph">
+<code class="descclassname">components.graph.</code><code class="descname">generate_graph</code><span class="sig-paren">(</span><em>self</em>, <em>node_count=0</em>, <em>edge_count=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#generate_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.generate_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a graph using #node_count nodes &amp; #edge_count edges, and update self.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>node_count</strong> – #nodes in graph</li>
+<li><strong>edge_count</strong> – #edges in graph</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Invariant:</th><td class="field-body"><p class="first">edge_count &lt;= node_count*(node_count -1)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Graph with max(node_count, #self.nodes) nodes &amp; max(edge_count, #self.edges) edges</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="components.graph.generate_node">
+<code class="descclassname">components.graph.</code><code class="descname">generate_node</code><span class="sig-paren">(</span><em>self</em>, <em>num=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#generate_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.generate_node" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="components.html"
+                        title="previous chapter">components package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="testing.html"
+                        title="next chapter">testing package</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="testing.html" title="testing package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="components.html" title="components package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Graphs 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >components</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="components.html" >components package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, iko.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

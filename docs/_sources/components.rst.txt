@@ -1,0 +1,17 @@
+components package
+==================
+
+Submodules
+----------
+
+.. toctree::
+
+   components.graph
+
+Module contents
+---------------
+
+.. automodule:: components
+    :members:
+    :undoc-members:
+    :show-inheritance:
