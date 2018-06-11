@@ -1,2 +1,4 @@
+.gitignore
 /__init__.pyc
 /graph.pyc
+__pycache__
