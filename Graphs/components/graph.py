@@ -3,35 +3,7 @@ Created on Dec 13, 2017
 
 :author: iko
 """
-from itertools import repeat
 from collections import Hashable
-
-
-def generate_node(self, num=0):
-    for _ in repeat(None, num):
-        self.nodes.add(_Node())
-
-
-def generate_edges(self):
-    pass
-
-
-def generate_graph(self, node_count=0, edge_count=0):
-    """
-    Generate a graph using #node_count nodes & #edge_count edges, and update self.
-
-    :param node_count: #nodes in graph
-    :param edge_count: #edges in graph
-    :invariant: edge_count <= node_count*(node_count -1)
-    :return: Graph with max(node_count, #self.nodes) nodes & max(edge_count, #self.edges) edges
-    """
-    while node_count < 0:
-        self.add_node()
-        node_count -= 1
-
-    while edge_count < 0:
-        self.add_edge()
-        edge_count -= 1
 
 
 class _AttrObject(object):
@@ -185,13 +157,13 @@ class Graph(_AttrObject):
 
         return node
 
-    def add_edge(self, *names, nodes_attrs=None, **attrs):  # TODO: Add multi edge support.
+    def add_edge(self, *names, nodes_attrs=None, **attrs):
         """
         Add a new edge with names as its nodes data & attrs as its attributes.
 
         Add edge only if not exists. Distinguish between attrs & undirected edges.
 
-        :todo: Add parallel edges support.
+        :todo: Add multi edges support.
         :param names: sequence of Hashable.
         :param nodes_attrs: iterable of key-value pairs or None.
         :param attrs: sequence of key-value pairs.
@@ -240,21 +212,25 @@ class Graph(_AttrObject):
         Raises KeyError if not present.
         :param edge: type _Edge.
         """
-        if not isinstance(edge, _Edge):
-            raise TypeError("_Edge object expected, got %s" % type(edge).__name__)
-        else:
+        try:
             for node in edge.nodes:
                 node.edges.remove(edge)
 
+        except AttributeError as err:
+            print("{0}".format(err))
+
+        else:
             self.edges.remove(edge)
+
+        return edge
 
     def _remove_edges_from(self, edges):
         """
         Remove edges from self.edges.
 
-        Raises TypeError if edge not of _DiEdge type.
+        Raises TypeError if edge not of _Edge type.
         Raises KeyError if not present.
-        :param edges: iterable of type _DiEdge.
+        :param edges: iterable of type _Edge.
         """
         return {self._remove_edge(edge) for edge in set(edges)}
 
@@ -266,8 +242,14 @@ class Graph(_AttrObject):
         :return: deleted node. Type _Node.
         """
         node = self.get_node_by_name(name)
-        if node is not None:
+
+        try:
             self._remove_edges_from(node.edges)
+
+        except AttributeError as err:
+            print("{0}".format(err))
+
+        else:
             self.nodes.discard(node)
 
         return node
@@ -277,18 +259,13 @@ class Graph(_AttrObject):
         Delete edge with 'names' nodes.
 
         :param names: Hashable object.
-        :return: deleted edge. Type _DiEdge.
+        :return: deleted edge. Type _Edge.
         """
-        edge = self.get_edge_by_names(*names)
-        if edge is not None:
-            self._remove_edge(edge)
-
-        return edge
+        return self._remove_edge(self.get_edge_by_names(*names))
 
     def del_nodes_from(self, names):
         """
-        Delete nodes with name in names, if exists.
-        Delete names from self.nodes.
+        Delete 'names' from self.nodes.
 
         :param names: iterable of Hashable type.
         :return: deleted nodes. Type _Node set.
@@ -297,12 +274,10 @@ class Graph(_AttrObject):
 
     def del_edges_from(self, names_iterable):
         """
-        Delete edges.
-
-        Delete edges between nodes with data = names from names_iterable.
+        Delete edges between 'names_iterable' nodes.
 
         :param names_iterable: iterable of Hashable type.
-        :return: deleted edges. Type _DiEdge set.
+        :return: deleted edges. Type _Edge set.
         """
         return {self.del_edge(*names) for names in set(names_iterable)}
 
@@ -317,12 +292,13 @@ class _Edge(_AttrObject):
         Constructor
         :param nodes: iterable of _Node type.
         """
-        if not any(nodes):
-            raise ValueError("Edge must contain at least 1 node object in nodes, got empty set.")
+        try:
+            for node in nodes:
+                if not isinstance(node, _Node):
+                    raise TypeError("_Node objects expected, got %s(%s)" % (type(node).__name__, node))
 
-        for node in nodes:
-            if not isinstance(node, _Node):
-                raise TypeError("_Node objects expected, got %s(%s)" % (type(node).__name__, node))
+        except TypeError as err:
+            raise TypeError("{0}".format(err))
 
         _AttrObject.__init__(self, **attrs)
         self.nodes = set(nodes)
