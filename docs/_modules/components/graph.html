@@ -51,59 +51,38 @@
 
 <span class="sd">:author: iko</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">repeat</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Hashable</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Mapping</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
 
 
-<div class="viewcode-block" id="generate_node"><a class="viewcode-back" href="../../components.graph.html#components.graph.generate_node">[docs]</a><span class="k">def</span> <span class="nf">generate_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">repeat</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">_Node</span><span class="p">())</span></div>
+<span class="c1"># TODO: Switch all error prints to logging print.</span>
+<div class="viewcode-block" id="print_obj_error"><a class="viewcode-back" href="../../components.graph.html#components.graph.print_obj_error">[docs]</a><span class="k">def</span> <span class="nf">print_obj_error</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">string</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">&quot;{0}.{1} failed: {2}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span> <span class="n">string</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="generate_edges"><a class="viewcode-back" href="../../components.graph.html#components.graph.generate_edges">[docs]</a><span class="k">def</span> <span class="nf">generate_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">pass</span></div>
-
-
-<div class="viewcode-block" id="generate_graph"><a class="viewcode-back" href="../../components.graph.html#components.graph.generate_graph">[docs]</a><span class="k">def</span> <span class="nf">generate_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_count</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">edge_count</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Generate a graph using #node_count nodes &amp; #edge_count edges, and update self.</span>
-
-<span class="sd">    :param node_count: #nodes in graph</span>
-<span class="sd">    :param edge_count: #edges in graph</span>
-<span class="sd">    :invariant: edge_count &lt;= node_count*(node_count -1)</span>
-<span class="sd">    :return: Graph with max(node_count, #self.nodes) nodes &amp; max(edge_count, #self.edges) edges</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">while</span> <span class="n">node_count</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">()</span>
-        <span class="n">node_count</span> <span class="o">-=</span> <span class="mi">1</span>
-
-    <span class="k">while</span> <span class="n">edge_count</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_edge</span><span class="p">()</span>
-        <span class="n">edge_count</span> <span class="o">-=</span> <span class="mi">1</span></div>
-
-
+<span class="c1"># TODO: Delete this class.</span>
 <span class="k">class</span> <span class="nc">_AttrObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    classdocs</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs_dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes_dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_attrs</span><span class="p">(</span><span class="o">**</span><span class="n">attrs_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_attrs</span><span class="p">(</span><span class="o">**</span><span class="n">attributes_dict</span><span class="p">)</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nd">@property</span> <span class="c1"># TODO: arrange property get\set\del attrs. or delete entire _AttrObject.</span>
+    <span class="k">def</span> <span class="nf">get_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :return: Object&#39;s data.</span>
+<span class="sd">        :return: Object&#39;s get_attrs.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span>
 
     <span class="k">def</span> <span class="nf">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set node&#39;s attribute &#39;attr&#39; to val.</span>
+<span class="sd">        Set object&#39;s attribute &#39;attr&#39; to val.</span>
 
 <span class="sd">        :param attr:</span>
 <span class="sd">        :param val:</span>
@@ -112,7 +91,7 @@
 
     <span class="k">def</span> <span class="nf">set_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set node&#39;s attributes.</span>
+<span class="sd">        Set object&#39;s attributes.</span>
 
 <span class="sd">        :param attributes:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -121,48 +100,49 @@
 
     <span class="k">def</span> <span class="nf">del_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete node&#39;s attribute.</span>
+<span class="sd">        Delete object&#39;s attribute.</span>
 
-<span class="sd">        :param attr: type = strings.</span>
+<span class="sd">        :param attr: type = string.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">del_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">del_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete node&#39;s attributes.</span>
+<span class="sd">        Delete object&#39;s attributes.</span>
 
-<span class="sd">        :param attrs: iterable of attribute strings.</span>
+<span class="sd">        :param attributes: iterable of attribute strings.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">del_attr</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
 
 
+<span class="c1"># TODO: Return generators instead of sets wherever I can.</span>
 <div class="viewcode-block" id="Graph"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph">[docs]</a><span class="k">class</span> <span class="nc">Graph</span><span class="p">(</span><span class="n">_AttrObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    classdocs</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodes_attrs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edges_attrs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodes_attributes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edges_attributes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param nodes: graph&#39;s nodes. iterable of Hashable type.</span>
 <span class="sd">        :param edges: graph&#39;s edges.iterable of iterable of Hashable type.</span>
-<span class="sd">        :param nodes_attrs: nodes default attributes. iterable of key-value type or None.</span>
-<span class="sd">        :param edges_attrs: edges default attributes. iterable of key-value type or None.</span>
-<span class="sd">        :param **attrs: graph&#39;s default attributes.</span>
+<span class="sd">        :param nodes_attributes: nodes default attributes. iterable of key-value type or None.</span>
+<span class="sd">        :param edges_attributes: edges default attributes. iterable of key-value type or None.</span>
+<span class="sd">        :param **attributes: graph&#39;s default attributes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">_AttrObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
+        <span class="n">_AttrObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
         <span class="n">nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span> <span class="k">if</span> <span class="n">nodes</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">nodes</span>
         <span class="n">edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span> <span class="k">if</span> <span class="n">edges</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">edges</span>
-        <span class="n">nodes_attrs</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">nodes_attrs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">nodes_attrs</span>
-        <span class="n">edges_attrs</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">edges_attrs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">edges_attrs</span>
+        <span class="n">nodes_attributes</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">nodes_attributes</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">nodes_attributes</span>
+        <span class="n">edges_attributes</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">edges_attributes</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">edges_attributes</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="o">**</span><span class="n">nodes_attrs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">nodes_attrs</span><span class="p">,</span> <span class="o">**</span><span class="n">edges_attrs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_nodes</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="o">**</span><span class="n">nodes_attributes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_edges</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">nodes_attributes</span><span class="p">,</span> <span class="o">**</span><span class="n">edges_attributes</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
@@ -170,189 +150,358 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">nodes_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :return: graph&#39;s node&#39;s data. type = dictionary valued dictionary.</span>
+<span class="sd">        :return: graph&#39;s node&#39;s get_attrs. type = dictionary valued dictionary.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">node</span><span class="o">.</span><span class="n">data</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">node</span><span class="o">.</span><span class="n">get_attrs</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">edges_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :return: graph&#39;s edge&#39;s data. type = dictionary valued dictionary.</span>
+<span class="sd">        :return: graph&#39;s edge&#39;s get_attrs. type = dictionary valued dictionary.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">edge</span><span class="o">.</span><span class="n">nodes</span><span class="p">):</span> <span class="n">edge</span><span class="o">.</span><span class="n">data</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">edge</span><span class="o">.</span><span class="n">nodes</span><span class="p">):</span> <span class="n">edge</span><span class="o">.</span><span class="n">get_attrs</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">}</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :return: graph&#39;s data. type = dictionary valued dictionary.</span>
+<span class="sd">        :return: graph&#39;s get_attrs. type = dictionary valued dictionary.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;nodes&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_data</span><span class="p">,</span> <span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges_data</span><span class="p">}</span>
 
-<div class="viewcode-block" id="Graph.get_node_by_name"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.get_node_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_node_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="c1"># TODO: Might want to combine get_node with get_nodes.</span>
+<div class="viewcode-block" id="Graph.get_node"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.get_node">[docs]</a>    <span class="k">def</span> <span class="nf">get_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return node from self.nodes s.t. node.data = name, if exists. Else return None.</span>
+<span class="sd">        Return node named &#39;name&#39; if exists, else return None.</span>
 
-<span class="sd">        :param name: any object.</span>
+<span class="sd">        :param name: node&#39;s name.</span>
+<span class="sd">        :type name: Hashable.</span>
+<span class="sd">        :rtype _Node | None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">node</span>
 
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="Graph.get_edge_by_names"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.get_edge_by_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_edge_by_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">names</span><span class="p">):</span>  <span class="c1"># TODO: Change to support parallel edges.</span>
+    <span class="c1"># TODO: Implement more efficiently.</span>
+<div class="viewcode-block" id="Graph.get_nodes"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.get_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">get_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return edge from self.edges.</span>
+<span class="sd">        Return graph&#39;s nodes, s.t. node&#39;s name in &#39;names&#39; if exists, else return None.</span>
 
-<span class="sd">        If exists return edge s.t data of edge.nodes = obj0 &amp; names.</span>
-<span class="sd">        Else return None.</span>
-
-<span class="sd">        :param names: any object.</span>
-<span class="sd">        :attention: Graph should not contain an edge object with empty set of nodes.</span>
+<span class="sd">        :param names: nodes names.</span>
+<span class="sd">        :type names: Iterable[Hashable].</span>
+<span class="sd">        :rtype set(_Node | None) | None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">{</span><span class="n">node</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">edge</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">edge</span>
 
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">)}</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">print_obj_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="Graph.add_node"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.add_node">[docs]</a>    <span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">):</span>
+    <span class="c1"># TODO: Might want to combine set_node with set_nodes.</span>
+<div class="viewcode-block" id="Graph.set_node"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.set_node">[docs]</a>    <span class="k">def</span> <span class="nf">set_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add a new node with name as it&#39;s data, if not exists.</span>
+<span class="sd">        Set &#39;name&#39; named node attributes using &#39;attributes&#39;.</span>
 
-<span class="sd">        :param name: Hashable object.</span>
-<span class="sd">        :param attrs: sequence of key-value pairs.</span>
-<span class="sd">        :return: node. type(node) = _Node</span>
+<span class="sd">        :param name: node&#39;s name.</span>
+<span class="sd">        :type name: Hashable.</span>
+<span class="sd">        :param attributes: node&#39;s new attributes.</span>
+<span class="sd">        :type attributes: Mapping.</span>
+<span class="sd">        :return: node.</span>
+<span class="sd">        :rtype: _Node | None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node_by_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">node</span> <span class="o">=</span> <span class="n">_Node</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">node</span><span class="o">.</span><span class="n">set_attrs</span><span class="p">(</span><span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
+
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">set_attrs</span><span class="p">(</span><span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">print_obj_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">node</span></div>
 
-<div class="viewcode-block" id="Graph.add_edge"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.add_edge">[docs]</a>    <span class="k">def</span> <span class="nf">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">names</span><span class="p">,</span> <span class="n">nodes_attrs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">):</span>  <span class="c1"># TODO: Add multi edge support.</span>
+<div class="viewcode-block" id="Graph.set_nodes"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.set_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">set_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add a new edge with names as its nodes data &amp; attrs as its attributes.</span>
+<span class="sd">        Set nodes named from &#39;names&#39; with &#39;attributes&#39;.</span>
 
-<span class="sd">        Add edge only if not exists. Distinguish between attrs &amp; undirected edges.</span>
-
-<span class="sd">        :todo: Add parallel edges support.</span>
-<span class="sd">        :param names: sequence of Hashable.</span>
-<span class="sd">        :param nodes_attrs: iterable of key-value pairs or None.</span>
-<span class="sd">        :param attrs: sequence of key-value pairs.</span>
-<span class="sd">        :return: edge. type(edge) = _Edge.</span>
+<span class="sd">        :param names: nodes names.</span>
+<span class="sd">        :type names: Iterable[Hashable]</span>
+<span class="sd">        :param attributes: nodes new attributes</span>
+<span class="sd">        :type attributes: Mapping.</span>
+<span class="sd">        :return: nodes with new attributes.</span>
+<span class="sd">        :rtype: Iterable[_Node] | None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">edge</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_edge_by_names</span><span class="p">(</span><span class="o">*</span><span class="n">names</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">edge</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">nodes_attrs</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">nodes_attrs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">nodes_attrs</span>
-            <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="o">**</span><span class="n">nodes_attrs</span><span class="p">)</span>
-            <span class="n">edge</span> <span class="o">=</span> <span class="n">_Edge</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">set_node</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">)}</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">print_obj_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
 
-            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="n">node</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">edge</span><span class="o">.</span><span class="n">set_attrs</span><span class="p">(</span><span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">edge</span></div>
-
-<div class="viewcode-block" id="Graph.add_nodes_from"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.add_nodes_from">[docs]</a>    <span class="k">def</span> <span class="nf">add_nodes_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">):</span>
+<div class="viewcode-block" id="Graph.add_node"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.add_node">[docs]</a>    <span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add new nodes with objects from names as their data, if not exist.</span>
+<span class="sd">        Add new node named &#39;name&#39; if not exists, else override node&#39;s attributes if &#39;override&#39; is True.</span>
 
-<span class="sd">        :param names: iterable of Hashable type.</span>
-<span class="sd">        :param attrs: sequences of key-value pairs.</span>
-<span class="sd">        :return: set(nodes). for node in nodes, type(node) = _Node</span>
+<span class="sd">        :param name: node&#39;s name.</span>
+<span class="sd">        :type name: Hashable.</span>
+<span class="sd">        :param override: if true, &amp; node named &#39;name&#39; exists, override its attributes.</span>
+<span class="sd">        Else return existing node with old attributes.</span>
+<span class="sd">        :type override: bool.</span>
+<span class="sd">        :param attributes: node&#39;s attributes.</span>
+<span class="sd">        :type attributes: Mapping.</span>
+<span class="sd">        :return: node named &#39;name&#39;.</span>
+<span class="sd">        :rtype: _Node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">}</span></div>
 
-<div class="viewcode-block" id="Graph.add_edges_from"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.add_edges_from">[docs]</a>    <span class="k">def</span> <span class="nf">add_edges_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names_iterable</span><span class="p">,</span> <span class="n">nodes_attrs</span><span class="o">=</span><span class="p">{},</span> <span class="o">**</span><span class="n">attrs</span><span class="p">):</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_node</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">)</span> <span class="k">if</span> <span class="n">override</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">_Node</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">)</span> <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">node</span></div>
+
+    <span class="c1"># TODO: Try to make implementation more efficient. maybe by using union instead of add to self.nodes.</span>
+    <span class="c1"># TODO: For better efficiency, implement get_nodes and set_nodes in O(N) if can, or O(NlogN) using ordering.</span>
+    <span class="c1"># TODO: Use these implemented methods to implement add_nodes.</span>
+<div class="viewcode-block" id="Graph.add_nodes"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.add_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">add_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add new edges with objects from names_iterable as their data, if not exist.</span>
+<span class="sd">        Add new nodes named name, s.t name in &#39;name&#39;, if not exist.</span>
 
-<span class="sd">        :param names_iterable: iterable of Hashable type.</span>
-<span class="sd">        :param nodes_attrs: iterable of key-value pairs.</span>
-<span class="sd">        :param attrs: iterable of sequences of key-value pairs.</span>
-<span class="sd">        :return: set(edges). for edge in edges, type(edge) = _Edge</span>
+<span class="sd">        :param names: nodes names.</span>
+<span class="sd">        :type names: Iterable[Hashable].</span>
+<span class="sd">        :param attributes: nodes attributes.</span>
+<span class="sd">        :type attributes: Mapping.</span>
+<span class="sd">        :param override: if true, override existing node&#39;s attributes</span>
+<span class="sd">        :type override: bool.</span>
+<span class="sd">        :return: set of added nodes.</span>
+<span class="sd">        :rtype: set(_Node)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="o">*</span><span class="n">names</span><span class="p">,</span> <span class="n">nodes_attrs</span><span class="o">=</span><span class="n">nodes_attrs</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span> <span class="k">for</span> <span class="n">names</span> <span class="ow">in</span> <span class="n">names_iterable</span><span class="p">}</span></div>
-
-    <span class="k">def</span> <span class="nf">_remove_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Remove edge from self.edges.</span>
-
-<span class="sd">        Raises TypeError if edge not of _Edge type.</span>
-<span class="sd">        Raises KeyError if not present.</span>
-<span class="sd">        :param edge: type _Edge.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">_Edge</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;_Edge object expected, got </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">edge</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
-                <span class="n">node</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_remove_edges_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Remove edges from self.edges.</span>
-
-<span class="sd">        Raises TypeError if edge not of _DiEdge type.</span>
-<span class="sd">        Raises KeyError if not present.</span>
-<span class="sd">        :param edges: iterable of type _DiEdge.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_remove_edge</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">edges</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">override</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">}</span></div>
 
 <div class="viewcode-block" id="Graph.del_node"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.del_node">[docs]</a>    <span class="k">def</span> <span class="nf">del_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete node with data = name, if exists.</span>
+<span class="sd">        Delete node named &#39;name&#39;, if exists.</span>
 
-<span class="sd">        :param name: any object.</span>
-<span class="sd">        :return: deleted node. Type _Node.</span>
+<span class="sd">        :param name: node&#39;s name.</span>
+<span class="sd">        :type name: _Node.</span>
+<span class="sd">        :return: deleted node.</span>
+<span class="sd">        :rtype: _Node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node_by_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_remove_edges_from</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_remove_edges</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">print_obj_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">node</span></div>
+
+    <span class="c1"># TODO: Try to make implementation more efficient. maybe by using union instead of add to self.nodes.</span>
+    <span class="c1"># TODO: For better efficiency, implement get_nodes and set_nodes in O(N) if can, or O(NlogN) using ordering.</span>
+    <span class="c1"># TODO: Use these implemented methods to implement del_nodes</span>
+<div class="viewcode-block" id="Graph.del_nodes"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.del_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">del_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete nodes named name, s.t. name in &#39;names&#39; from  graph&#39;s nodes.</span>
+
+<span class="sd">        :param names: nodes names.</span>
+<span class="sd">        :type names: Iterable[Hashable]</span>
+<span class="sd">        :return: deleted nodes.</span>
+<span class="sd">        :rtype: set(_Node).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">del_node</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">)}</span></div>
+
+    <span class="c1"># TODO: Might combine this method with get_edge_by_node_objects to one method.</span>
+<div class="viewcode-block" id="Graph.get_edge"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.get_edge">[docs]</a>    <span class="k">def</span> <span class="nf">get_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">nodes_names</span><span class="p">):</span>  <span class="c1"># TODO: Change to support parallel edges.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return edge from  graph&#39;s edges if exists, else returns None</span>
+
+<span class="sd">        :param nodes_names: edge&#39;d nodes names.</span>
+<span class="sd">        :type nodes_names: Iterable[Hashable].</span>
+<span class="sd">        :rtype _Edge | None</span>
+<span class="sd">        :note Graph should not contain an edge object with empty set of nodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_edge_by_nodes_objects</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_nodes</span><span class="p">(</span><span class="n">nodes_names</span><span class="p">))</span></div>
+
+    <span class="c1"># TODO: Doesn&#39;t supports multi graph.</span>
+    <span class="k">def</span> <span class="nf">_get_edge_by_nodes_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return edge from graph&#39;s edges s.t edge.nodes == &#39;nodes&#39;.</span>
+
+<span class="sd">        :param nodes: edge nodes.</span>
+<span class="sd">        :type nodes: Iterable[_Node].</span>
+<span class="sd">        :rtype _Edge | None</span>
+<span class="sd">        :note: Graph should not contain an edge object with empty set of nodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">edge</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span> <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">nodes</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">nodes</span><span class="p">))</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">StopIteration</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">print_obj_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># TODO: Might want to combine set_edge with set_edges.</span>
+<div class="viewcode-block" id="Graph.set_edge"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.set_edge">[docs]</a>    <span class="k">def</span> <span class="nf">set_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Graph.set_edges"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.set_edges">[docs]</a>    <span class="k">def</span> <span class="nf">set_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+    <span class="c1"># TODO: use new syntax for parameters. PEP 3102.</span>
+    <span class="c1"># TODO: Create a mechanism for users to add &#39;attributes&#39;, handle them and view documentation about them.</span>
+    <span class="c1"># TODO: move &#39;nodes_attributes&#39; &amp; &#39;parallel&#39; from function declaration into &#39;attributes&#39; handling.</span>
+    <span class="c1"># TODO: Add &#39;override&#39; option like in &#39;add_node&#39;.</span>
+    <span class="c1"># TODO: on setting edge as parallel, ensure all other edges are parallel.</span>
+<div class="viewcode-block" id="Graph.add_edge"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.add_edge">[docs]</a>    <span class="k">def</span> <span class="nf">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">nodes_names</span><span class="p">,</span> <span class="n">nodes_attributes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add new edge with nodes named &#39;nodes_names&#39; if not exists or &#39;parallel&#39; is True.</span>
+
+<span class="sd">        If edge exists &amp; &#39;parallel&#39; is false, return existing edge.</span>
+<span class="sd">        :param nodes_names: edge&#39;s nodes names.</span>
+<span class="sd">        :type nodes_names: Iterable[Hashable]</span>
+<span class="sd">        :param nodes_attributes: edge&#39;s nodes attributes.</span>
+<span class="sd">        :type nodes_attributes: Mapping | None.</span>
+<span class="sd">        :param parallel: parallel edge.</span>
+<span class="sd">        :type parallel: bool.</span>
+<span class="sd">        :param override: if true, overrides edge&#39;s attributes.</span>
+<span class="sd">        :type override: bool</span>
+<span class="sd">        :param attributes: edge&#39;s attributes.</span>
+<span class="sd">        :type attributes: Mapping.</span>
+<span class="sd">        :return: edge if received valid arguments, None otherwise.</span>
+<span class="sd">        :rtype: _Edge.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;directed&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">directed</span> <span class="ow">and</span> <span class="s1">&#39;exit_nodes&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;This is a directed graph. &#39;attributes&#39; must specify &#39;exit_nodes&#39;&quot;</span><span class="p">)</span>
+
+        <span class="n">existing_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nodes</span><span class="p">(</span><span class="n">nodes_names</span><span class="p">)</span>
+        <span class="n">edge</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_edge_by_nodes_objects</span><span class="p">(</span><span class="n">existing_nodes</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">edge</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">parallel</span><span class="p">:</span>
+            <span class="n">existing_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">new_nodes_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">nodes_names</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="n">node</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">existing_nodes</span><span class="p">}</span>
+            <span class="n">edge</span> <span class="o">=</span> <span class="n">_Edge</span><span class="p">(</span><span class="n">new_nodes_names</span><span class="p">,</span> <span class="n">existing_nodes</span><span class="p">,</span> <span class="n">nodes_attributes</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="n">parallel</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">|=</span> <span class="n">edge</span><span class="o">.</span><span class="n">nodes</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">override</span><span class="p">:</span>
+            <span class="c1"># TODO: for node in nodes_names: node.set_attrs(nodes_attributes)</span>
+            <span class="n">edge</span><span class="o">.</span><span class="n">set_attrs</span><span class="p">(</span><span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">edge</span></div>
+
+    <span class="c1"># TODO: Try to make implementation more efficient. maybe by using union instead of add to self.edges.</span>
+    <span class="c1"># TODO: Should I replace default value of nodes_attributes to None? YES</span>
+<div class="viewcode-block" id="Graph.add_edges"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.add_edges">[docs]</a>    <span class="k">def</span> <span class="nf">add_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edges_names</span><span class="p">,</span> <span class="n">nodes_attributes</span><span class="o">=</span><span class="p">{},</span> <span class="o">**</span><span class="n">attributes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add new edges with objects from names_iterable as their get_attrs, if not exist.</span>
+
+<span class="sd">        :param edges_names: Each edge_name contains nodes_names.</span>
+<span class="sd">        :type edges_names: Iterable[Iterable[Hashable]]</span>
+<span class="sd">        :param nodes_attributes: iterable of key-value pairs.</span>
+<span class="sd">        :param attributes: iterable of sequences of key-value pairs.</span>
+<span class="sd">        :return: set(edges). for edge in edges, type(edge) = _Edge</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="o">*</span><span class="n">nodes_names</span><span class="p">,</span> <span class="n">nodes_attributes</span><span class="o">=</span><span class="n">nodes_attributes</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">)</span> <span class="k">for</span> <span class="n">nodes_names</span> <span class="ow">in</span> <span class="n">edges_names</span><span class="p">}</span></div>
+
+    <span class="c1"># TODO: Should I allow edge be None? Is this efficient? Look for the test that sends None to this method.</span>
+    <span class="k">def</span> <span class="nf">_remove_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove edge from  graph&#39;s edges.</span>
+
+<span class="sd">        :param edge: edge to be removed.</span>
+<span class="sd">        :type edge: _Edge | None.</span>
+<span class="sd">        :return: removed edge if found in graph&#39;s edges. None otherwise.</span>
+<span class="sd">        :rtype: _Edge | None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">edge</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">print_obj_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">edge</span>
+
+    <span class="k">def</span> <span class="nf">_remove_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove edges from self.edges.</span>
+
+<span class="sd">        Raises AttributeError if edge not of _Edge type.</span>
+<span class="sd">        :param edges: edges to be removed.</span>
+<span class="sd">        :type edges: Iterable[_Edge]</span>
+<span class="sd">        :return: set of removed edges.</span>
+<span class="sd">        :rtype: set(_Edge) | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_remove_edge</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">edges</span><span class="p">)}</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">print_obj_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Graph.del_edge"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.del_edge">[docs]</a>    <span class="k">def</span> <span class="nf">del_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">names</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete edge with &#39;names&#39; nodes.</span>
 
-<span class="sd">        :param names: Hashable object.</span>
-<span class="sd">        :return: deleted edge. Type _DiEdge.</span>
+<span class="sd">        :param names: edge&#39;s nodes names.</span>
+<span class="sd">        :type names: Iterable[Hashable]</span>
+<span class="sd">        :return: deleted edge.</span>
+<span class="sd">        :rtype: _Edge.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">edge</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_edge_by_names</span><span class="p">(</span><span class="o">*</span><span class="n">names</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">edge</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_remove_edge</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_edge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_edge</span><span class="p">(</span><span class="o">*</span><span class="n">names</span><span class="p">))</span></div>
 
-        <span class="k">return</span> <span class="n">edge</span></div>
-
-<div class="viewcode-block" id="Graph.del_nodes_from"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.del_nodes_from">[docs]</a>    <span class="k">def</span> <span class="nf">del_nodes_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+<div class="viewcode-block" id="Graph.del_edges"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.del_edges">[docs]</a>    <span class="k">def</span> <span class="nf">del_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes_names_iterable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete nodes with name in names, if exists.</span>
-<span class="sd">        Delete names from self.nodes.</span>
+<span class="sd">        Delete edges between &#39;names_iterable&#39; nodes.</span>
 
-<span class="sd">        :param names: iterable of Hashable type.</span>
-<span class="sd">        :return: deleted nodes. Type _Node set.</span>
+<span class="sd">        :param nodes_names_iterable: iterable of Hashable type.</span>
+<span class="sd">        :type nodes_names_iterable: Iterable[Iterable[Hashable]]</span>
+<span class="sd">        :return: deleted edges.</span>
+<span class="sd">        :rtype: set(_Edge) | None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">del_node</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">)}</span></div>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">del_edge</span><span class="p">(</span><span class="o">*</span><span class="n">names</span><span class="p">)</span> <span class="k">for</span> <span class="n">names</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">nodes_names_iterable</span><span class="p">)}</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">print_obj_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="Graph.del_edges_from"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.del_edges_from">[docs]</a>    <span class="k">def</span> <span class="nf">del_edges_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names_iterable</span><span class="p">):</span>
+<div class="viewcode-block" id="Graph.set_attr"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.set_attr">[docs]</a>    <span class="k">def</span> <span class="nf">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete edges.</span>
+<span class="sd">        Set graph&#39;s attributes.</span>
 
-<span class="sd">        Delete edges between nodes with data = names from names_iterable.</span>
-
-<span class="sd">        :param names_iterable: iterable of Hashable type.</span>
-<span class="sd">        :return: deleted edges. Type _DiEdge set.</span>
+<span class="sd">        :param attr: type of strings.</span>
+<span class="sd">        :param val: attribute value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">del_edge</span><span class="p">(</span><span class="o">*</span><span class="n">names</span><span class="p">)</span> <span class="k">for</span> <span class="n">names</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">names_iterable</span><span class="p">)}</span></div></div>
+        <span class="n">_AttrObject</span><span class="o">.</span><span class="n">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s1">&#39;directed&#39;</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">_Edge</span><span class="o">.</span><span class="n">exit_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="n">_Edge</span><span class="o">.</span><span class="n">enter_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="n">_Node</span><span class="o">.</span><span class="n">exit_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="n">_Node</span><span class="o">.</span><span class="n">enter_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="n">_Node</span><span class="o">.</span><span class="n">exit_degree</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="n">node_self</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_self</span><span class="o">.</span><span class="n">exit_edges</span><span class="p">))</span>
+            <span class="n">_Node</span><span class="o">.</span><span class="n">enter_degree</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="n">node_self</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_self</span><span class="o">.</span><span class="n">enter_edges</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s1">&#39;directed&#39;</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">del_attr</span><span class="p">(</span><span class="s1">&#39;directed&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Graph.del_attr"><a class="viewcode-back" href="../../components.graph.html#components.graph.Graph.del_attr">[docs]</a>    <span class="k">def</span> <span class="nf">del_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete graph&#39;s attribute.</span>
+
+<span class="sd">        :param attr: type of strings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_AttrObject</span><span class="o">.</span><span class="n">del_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s1">&#39;directed&#39;</span><span class="p">:</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="n">_Edge</span><span class="p">,</span> <span class="s1">&#39;exit_nodes&#39;</span><span class="p">)</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="n">_Edge</span><span class="p">,</span> <span class="s1">&#39;enter_nodes&#39;</span><span class="p">)</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="n">_Node</span><span class="p">,</span> <span class="s1">&#39;exit_edges&#39;</span><span class="p">)</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="n">_Node</span><span class="p">,</span> <span class="s1">&#39;enter_edges&#39;</span><span class="p">)</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="n">_Node</span><span class="p">,</span> <span class="s1">&#39;exit_degree&#39;</span><span class="p">)</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="n">_Node</span><span class="p">,</span> <span class="s1">&#39;enter_degree&#39;</span><span class="p">)</span></div></div>
 
 
 <span class="k">class</span> <span class="nc">_Edge</span><span class="p">(</span><span class="n">_AttrObject</span><span class="p">):</span>
@@ -360,32 +509,78 @@
 <span class="sd">    classdocs</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodes_attributes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
-<span class="sd">        :param nodes: iterable of _Node type.</span>
+
+<span class="sd">        Construct new edge using newly created nodes from &#39;nodes_names&#39; and existing &#39;nodes&#39; objects.</span>
+<span class="sd">        Set all node objects (newly created &amp; existing ones) attributes using &#39;nodes_attributes&#39;.</span>
+<span class="sd">        Existing node attributes will be overwritten.</span>
+<span class="sd">        Set edge attributes using &#39;attributes&#39;.</span>
+<span class="sd">        Supports: hyper graph, multi graph.</span>
+
+<span class="sd">        :todo check if need to change all docstrings to &#39;parameter&#39; or &#39;arg&#39;.Check also &#39;numpy docstring conventions&#39;.</span>
+<span class="sd">        :param nodes_names: names of edge&#39;s nodes.</span>
+<span class="sd">        :type nodes_names: Iterable[Hashable] | None</span>
+<span class="sd">        :param nodes: nodes from graph.</span>
+<span class="sd">        :type nodes: Iterable[_Node] | None</span>
+<span class="sd">        :param nodes_attributes: default nodes attributes to be used.</span>
+<span class="sd">        :type nodes_attributes: Mapping.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Edge must contain at least 1 node object in nodes, got empty set.&quot;</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">_Node</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;_Node objects expected, got </span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">node</span><span class="p">))</span>
+        <span class="n">_AttrObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes_names</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes_names</span> <span class="o">=</span> <span class="n">nodes_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span>
 
-        <span class="n">_AttrObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_names</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either &#39;nodes_names&#39; or &#39;nodes&#39; must be a non empty Iterable&quot;</span><span class="p">)</span>
+
+        <span class="n">nodes_attributes</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">nodes_attributes</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">nodes_attributes</span>
+        <span class="n">new_nodes</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{</span><span class="n">_Node</span><span class="p">(</span><span class="n">node_name</span><span class="p">,</span> <span class="o">**</span><span class="n">nodes_attributes</span><span class="p">)</span>
+                                                           <span class="k">for</span> <span class="n">node_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_names</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="ow">or</span> <span class="n">new_nodes</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="ow">and</span> <span class="n">new_nodes</span><span class="p">)</span> <span class="k">else</span> <span class="n">new_nodes</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add or Change edge&#39;s attributes.</span>
+<span class="sd">        Set edge&#39;s attributes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">_AttrObject</span><span class="o">.</span><span class="n">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s1">&#39;directed&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">directed</span><span class="p">:</span>
-            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;exit_node&#39;</span><span class="p">)</span>
-            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;enter_node&#39;</span><span class="p">)</span>
+        <span class="c1"># if attr == &#39;nodes_attributes&#39;:</span>
+        <span class="c1">#     for node in self.nodes:</span>
+        <span class="c1">#         node.set_attrs(val)</span>
+
+        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s1">&#39;exit_nodes&#39;</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">val</span><span class="p">)):</span>
+            <span class="n">exit_nodes_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="n">exit_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">exit_nodes_names</span> <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">))</span>
+            <span class="n">enter_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">-</span> <span class="n">exit_nodes</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">exit_nodes</span> <span class="o">=</span> <span class="n">exit_nodes</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">enter_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">-</span> <span class="n">exit_nodes</span>
+
+            <span class="k">for</span> <span class="n">exit_node</span> <span class="ow">in</span> <span class="n">exit_nodes</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">exit_node</span><span class="p">,</span> <span class="s1">&#39;exit_edges&#39;</span><span class="p">):</span>
+                    <span class="n">exit_node</span><span class="o">.</span><span class="n">exit_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+                <span class="n">exit_node</span><span class="o">.</span><span class="n">exit_edges</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="n">exit_node</span><span class="o">.</span><span class="n">exit_degree</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">exit_node</span><span class="o">.</span><span class="n">exit_edges</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">enter_node</span> <span class="ow">in</span> <span class="n">enter_nodes</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">enter_node</span><span class="p">,</span> <span class="s1">&#39;enter_edges&#39;</span><span class="p">):</span>
+                    <span class="n">enter_node</span><span class="o">.</span><span class="n">enter_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+                <span class="n">enter_node</span><span class="o">.</span><span class="n">enter_edges</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="n">enter_node</span><span class="o">.</span><span class="n">enter_degree</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">enter_node</span><span class="o">.</span><span class="n">enter_edges</span><span class="p">)</span>
+
+<span class="c1">#            _Node.exit_degree = property(lambda node_self: len(node_self.exit_edges))</span>
+<span class="c1">#            _Node.enter_degree = property(lambda node_self: len(node_self.enter_edges))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_AttrObject</span><span class="o">.</span><span class="n">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">del_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -393,43 +588,95 @@
 
 <span class="sd">        :param attr: type of strings.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s1">&#39;direction&#39;</span><span class="p">:</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;directed&#39;</span><span class="p">)</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;exit_nodes&#39;</span><span class="p">)</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;enter_nodes&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_AttrObject</span><span class="o">.</span><span class="n">del_attr</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
 
-        <span class="n">_AttrObject</span><span class="o">.</span><span class="n">del_attr</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s1">&#39;directed&#39;</span><span class="p">:</span>
-            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;exit_node&#39;</span><span class="p">)</span>
-            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;enter_node&#39;</span><span class="p">)</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nodes_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes_names</span>
+
+    <span class="nd">@nodes_names</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">nodes_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes_names</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">print_obj_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+
+    <span class="nd">@nodes_names</span><span class="o">.</span><span class="n">deleter</span>
+    <span class="k">def</span> <span class="nf">nodes_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes_names</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span>
+
+    <span class="nd">@nodes</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">nodes</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">set</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">print_obj_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+
+    <span class="nd">@nodes</span><span class="o">.</span><span class="n">deleter</span>
+    <span class="k">def</span> <span class="nf">nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span>
 
 
+<span class="c1"># TODO: make constructor private and unavailable for end users, while they still get _Node objects back.</span>
 <span class="k">class</span> <span class="nc">_Node</span><span class="p">(</span><span class="n">_AttrObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    classdocs</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">):</span>
+    <span class="c1"># TODO: Might want to remove &#39;name=name&#39; from constructor and let &#39;add_node&#39; handle it. Probably not.</span>
+    <span class="c1"># TODO: Switch to new syntax with * to declare positional parameters.</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
+<span class="sd">        :type name: Hashable</span>
+<span class="sd">        :type attributes: Mapping</span>
 <span class="sd">        :invariant: self.degree &gt;= 0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">_AttrObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
+
+        <span class="n">_AttrObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s1">&#39;name&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Hashable</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;unhashable type: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
-        <span class="n">_AttrObject</span><span class="o">.</span><span class="n">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+    <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">Hashable</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Hashable &#39;name&#39; expected, got {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">name</span>
+
+    <span class="nd">@name</span><span class="o">.</span><span class="n">deleter</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">degree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return node&#39;s degree.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">loop_counter</span> <span class="o">=</span> <span class="nb">len</span><span class="p">({</span><span class="n">edge</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">})</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span> <span class="o">+</span> <span class="n">loop_counter</span>
+
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">is_loop</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
 </pre></div>
 
           </div>
