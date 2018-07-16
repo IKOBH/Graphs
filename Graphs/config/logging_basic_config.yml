@@ -1,0 +1,18 @@
+version: 1
+formatters:
+  brief:
+    format: '%(levelname)s:%(message)s'
+  precise:
+    format: '%(asctime)s:%(levelname)s:%(name)s:%(funcName)s:%(lineno)d:%(message)s'
+handlers:
+  file:
+    class: logging.handlers.TimedRotatingFileHandler
+    formatter: precise
+    level: INFO
+    filename: 'graph.log'
+    when: 'S'
+    interval: 1
+    backupCount: 5
+loggers:
+  components.graph:
+    handlers: [file]

@@ -475,7 +475,10 @@ class TestGraph(object):
             assert edge.type == 'hyper'
 
     def test_remove_edge(self):
-        pass
+        self.graph1._remove_edge(self.e2_g1)
+
+        assert len(self.graph1.edges) == 0
+        assert self.graph1._remove_edge(None) is None
 
     def test_remove_edges(self):
         pass

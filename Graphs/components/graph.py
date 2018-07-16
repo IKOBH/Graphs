@@ -3,13 +3,17 @@ Created on Dec 13, 2017
 
 :author: iko
 """
+
+import yaml
+import logging.config
+from definitions import CONFIG_PATH
 from collections import Hashable, Iterable, Mapping
-import inspect
 
+with open(str(CONFIG_PATH)) as f:
+    config_dict = yaml.load(f)
 
-# TODO: Switch all error prints to logging print.
-def print_obj_error(obj, string=""):
-    return "{0}.{1} failed: {2}".format(type(obj).__name__, inspect.stack()[1][3], string)
+logging.config.dictConfig(config_dict)
+logger = logging.getLogger(__name__)
 
 
 # TODO: Delete this class.
@@ -69,6 +73,7 @@ class _AttrObject(object):
 
 
 # TODO: Return generators instead of sets wherever I can.
+# TODO: Make 'self.nodes = <Some iterable>' call add_nodes. Do the same with edges.
 class Graph(_AttrObject):
     """
     classdocs
@@ -84,21 +89,25 @@ class Graph(_AttrObject):
         :param edges_attributes: edges default attributes. iterable of key-value type or None.
         :param **attributes: graph's default attributes.
         """
+
         _AttrObject.__init__(self, **attributes)
         self.nodes = set()
         self.edges = set()
 
-        nodes = set() if nodes is None else nodes
-        edges = set() if edges is None else edges
-        nodes_attributes = {} if nodes_attributes is None else nodes_attributes
-        edges_attributes = {} if edges_attributes is None else edges_attributes
+        try:
+            self.add_nodes(nodes, **nodes_attributes)
+        except TypeError:
+            self.add_nodes(nodes)
 
-        self.add_nodes(nodes, **nodes_attributes)
-        self.add_edges(edges, nodes_attributes, **edges_attributes)
+        try:
+            self.add_edges(edges, nodes_attributes=nodes_attributes, **edges_attributes)
+        except TypeError:
+            self.add_edges(edges, nodes_attributes=nodes_attributes)
 
     def __str__(self):
         return str(self.id)
 
+    # TODO : Might want to use __repr__ or __str__ of _Node object.
     @property
     def nodes_data(self):
         """
@@ -106,6 +115,7 @@ class Graph(_AttrObject):
         """
         return {node.name: node.get_attrs for node in self.nodes}
 
+    # TODO : Might want to use __repr__ or __str__ of _Edge object.
     @property
     def edges_data(self):
         """
@@ -113,6 +123,7 @@ class Graph(_AttrObject):
         """
         return {frozenset(node.name for node in edge.nodes): edge.get_attrs for edge in self.edges}
 
+    # TODO : Might want to use __repr__ or __str__.
     @property
     def get_attrs(self):
         """
@@ -120,7 +131,6 @@ class Graph(_AttrObject):
         """
         return {'nodes': self.nodes_data, 'edges': self.edges_data}
 
-    # TODO: Might want to combine get_node with get_nodes.
     def get_node(self, name):
         """
         Return node named 'name' if exists, else return None.
@@ -148,10 +158,9 @@ class Graph(_AttrObject):
         try:
             return {self.get_node(name) for name in set(names)}
         except TypeError as err:
-            print(print_obj_error(self, err))
+            logger.warning(err)
             return None
 
-    # TODO: Might want to combine set_node with set_nodes.
     def set_node(self, name, **attributes):
         """
         Set 'name' named node attributes using 'attributes'.
@@ -169,7 +178,7 @@ class Graph(_AttrObject):
         try:
             node.set_attrs(**attributes)
         except AttributeError as err:
-            print(print_obj_error(self, err))
+            logger.warning(err)
 
         return node
 
@@ -184,10 +193,11 @@ class Graph(_AttrObject):
         :return: nodes with new attributes.
         :rtype: Iterable[_Node] | None
         """
+
         try:
             return {self.set_node(name, **attributes) for name in set(names)}
         except TypeError as err:
-            print(print_obj_error(self, err))
+            logger.warning(err)
             return None
 
     def add_node(self, name=None, override=True, **attributes):
@@ -214,7 +224,7 @@ class Graph(_AttrObject):
     # TODO: Try to make implementation more efficient. maybe by using union instead of add to self.nodes.
     # TODO: For better efficiency, implement get_nodes and set_nodes in O(N) if can, or O(NlogN) using ordering.
     # TODO: Use these implemented methods to implement add_nodes.
-    def add_nodes(self, names, override=True, **attributes):
+    def add_nodes(self, names, **attributes):
         """
         Add new nodes named name, s.t name in 'name', if not exist.
 
@@ -222,12 +232,15 @@ class Graph(_AttrObject):
         :type names: Iterable[Hashable].
         :param attributes: nodes attributes.
         :type attributes: Mapping.
-        :param override: if true, override existing node's attributes
-        :type override: bool.
-        :return: set of added nodes.
-        :rtype: set(_Node)
+        :return: set of nodes.
+        :rtype: set(_Node) | None
         """
-        return {self.add_node(name, override, **attributes) for name in names}
+
+        try:
+            return {self.add_node(name, **attributes) for name in names}
+        except TypeError as err:
+            logger.warning(err)
+            return None
 
     def del_node(self, name):
         """
@@ -244,7 +257,7 @@ class Graph(_AttrObject):
         try:
             self._remove_edges(node.edges)
         except AttributeError as err:
-            print(print_obj_error(self, err))
+            logger.warning(err)
 
         else:
             self.nodes.discard(node)
@@ -288,10 +301,11 @@ class Graph(_AttrObject):
         :rtype _Edge | None
         :note: Graph should not contain an edge object with empty set of nodes.
         """
+
         try:
             return next(edge for edge in self.edges if edge.nodes == set(nodes))
         except (StopIteration, TypeError) as err:
-            print(print_obj_error(self, err))
+            logger.warning(err)
             return None
 
     # TODO: Might want to combine set_edge with set_edges.
@@ -326,6 +340,7 @@ class Graph(_AttrObject):
         """
 
         if hasattr(self, 'directed') and self.directed and 'exit_nodes' not in attributes:
+            logger.error("This is a directed graph. 'attributes' must specify 'exit_nodes'")
             raise ValueError("This is a directed graph. 'attributes' must specify 'exit_nodes'")
 
         existing_nodes = self.get_nodes(nodes_names)
@@ -345,20 +360,24 @@ class Graph(_AttrObject):
         return edge
 
     # TODO: Try to make implementation more efficient. maybe by using union instead of add to self.edges.
-    # TODO: Should I replace default value of nodes_attributes to None? YES
-    def add_edges(self, edges_names, nodes_attributes={}, **attributes):
+    def add_edges(self, edges_names, **attributes):
         """
-        Add new edges with objects from names_iterable as their get_attrs, if not exist.
+        Add new edges from edges_names.
 
         :param edges_names: Each edge_name contains nodes_names.
         :type edges_names: Iterable[Iterable[Hashable]]
-        :param nodes_attributes: iterable of key-value pairs.
-        :param attributes: iterable of sequences of key-value pairs.
-        :return: set(edges). for edge in edges, type(edge) = _Edge
+        :param attributes: edges attributes.
+        :type attributes: Iterable[Mapping]
+        :return: set of edges.
+        :rtype: set(_Edge) | None
         """
-        return {self.add_edge(*nodes_names, nodes_attributes=nodes_attributes, **attributes) for nodes_names in edges_names}
 
-    # TODO: Should I allow edge be None? Is this efficient? Look for the test that sends None to this method.
+        try:
+            return {self.add_edge(*nodes_names, **attributes) for nodes_names in edges_names}
+        except TypeError as err:
+            logger.warning(err)
+            return None
+
     def _remove_edge(self, edge):
         """
         Remove edge from  graph's edges.
@@ -368,11 +387,12 @@ class Graph(_AttrObject):
         :return: removed edge if found in graph's edges. None otherwise.
         :rtype: _Edge | None.
         """
+
         try:
             for node in edge.nodes:
                 node.edges.remove(edge)
         except AttributeError as err:
-            print(print_obj_error(self, err))
+            logger.warning(err)
             return None
         else:
             self.edges.remove(edge)
@@ -389,10 +409,11 @@ class Graph(_AttrObject):
         :return: set of removed edges.
         :rtype: set(_Edge) | None
         """
+
         try:
             return {self._remove_edge(edge) for edge in set(edges)}
         except TypeError as err:
-            print(print_obj_error(self, err))
+            logger.warning(err)
             return None
 
     def del_edge(self, *names):
@@ -418,7 +439,7 @@ class Graph(_AttrObject):
         try:
             return {self.del_edge(*names) for names in set(nodes_names_iterable)}
         except TypeError as err:
-            print(print_obj_error(self, err))
+            logger.warning(err)
             return None
 
     def set_attr(self, attr, val):
@@ -461,6 +482,7 @@ class _Edge(_AttrObject):
     classdocs
     """
 
+    # TODO: Try make implementation better.
     def __init__(self, nodes_names=None, nodes=None, nodes_attributes=None, **attributes):
         """
         Constructor
@@ -481,12 +503,13 @@ class _Edge(_AttrObject):
         """
 
         _AttrObject.__init__(self, **attributes)
-        self._nodes_names = None
         self._nodes = None
-        self.nodes_names = nodes_names
         self.nodes = nodes
+        self._nodes_names = None
+        self.nodes_names = nodes_names
 
         if not self.nodes_names and not self.nodes:
+            logger.error("Either 'nodes_names' or 'nodes' must be a non empty Iterable")
             raise ValueError("Either 'nodes_names' or 'nodes' must be a non empty Iterable")
 
         nodes_attributes = {} if nodes_attributes is None else nodes_attributes
@@ -560,7 +583,7 @@ class _Edge(_AttrObject):
         try:
             self._nodes_names = None if names is None else set(names)
         except TypeError as err:
-            print(print_obj_error(self, err))
+            logger.warning(err)
 
     @nodes_names.deleter
     def nodes_names(self):
@@ -575,20 +598,18 @@ class _Edge(_AttrObject):
         try:
             self._nodes = None if nodes is None else set(nodes)
         except TypeError as err:
-            print(print_obj_error(self, err))
+            logger.warning(err)
 
     @nodes.deleter
     def nodes(self):
         del self._nodes
 
 
-# TODO: make constructor private and unavailable for end users, while they still get _Node objects back.
 class _Node(_AttrObject):
     """
     classdocs
     """
 
-    # TODO: Might want to remove 'name=name' from constructor and let 'add_node' handle it. Probably not.
     # TODO: Switch to new syntax with * to declare positional parameters.
     def __init__(self, name=None, **attributes):
         """
@@ -614,6 +635,7 @@ class _Node(_AttrObject):
     @name.setter
     def name(self, name):
         if not isinstance(name, Hashable):
+            logger.error("Hashable 'name' expected, got {0}".format(type(name).__name__))
             raise TypeError("Hashable 'name' expected, got {0}".format(type(name).__name__))
 
         self._name = id(self) if name is None else name
