@@ -1,3 +1,4 @@
 Graphs/.idea/
 Graphs/results/
 Graphs/testing/.pytest_cache/
+Graphs/__pycache__/
