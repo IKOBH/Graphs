@@ -26,6 +26,7 @@ class _AttrObject(object):
         """
         Constructor
         """
+
         self.id = id(self)
         self.set_attrs(**attributes_dict)
 
@@ -34,6 +35,7 @@ class _AttrObject(object):
         """
         :return: Object's get_attrs.
         """
+
         return self.__dict__
 
     def set_attr(self, attr, val):
@@ -43,6 +45,7 @@ class _AttrObject(object):
         :param attr:
         :param val:
         """
+
         setattr(self, attr, val)
 
     def set_attrs(self, **attributes):
@@ -51,6 +54,7 @@ class _AttrObject(object):
 
         :param attributes:
         """
+
         for attr, val in attributes.items():
             self.set_attr(attr, val)
 
@@ -60,6 +64,7 @@ class _AttrObject(object):
 
         :param attr: type = string.
         """
+
         delattr(self, attr)
 
     def del_attrs(self, attributes):
@@ -68,12 +73,11 @@ class _AttrObject(object):
 
         :param attributes: iterable of attribute strings.
         """
+
         for attr in attributes:
             self.del_attr(attr)
 
 
-# TODO: Return generators instead of sets wherever I can.
-# TODO: Make 'self.nodes = <Some iterable>' call add_nodes. Do the same with edges.
 class Graph(_AttrObject):
     """
     classdocs
@@ -83,26 +87,28 @@ class Graph(_AttrObject):
         """
         Constructor
 
-        :param nodes: graph's nodes. iterable of Hashable type.
-        :param edges: graph's edges.iterable of iterable of Hashable type.
-        :param nodes_attributes: nodes default attributes. iterable of key-value type or None.
-        :param edges_attributes: edges default attributes. iterable of key-value type or None.
+        :param nodes: graph's _nodes. iterable of Hashable type.
+        :param edges: graph's _edges.iterable of iterable of Hashable type.
+        :param nodes_attributes: _nodes default attributes. iterable of key-value type or None.
+        :param edges_attributes: _edges default attributes. iterable of key-value type or None.
         :param **attributes: graph's default attributes.
         """
 
         _AttrObject.__init__(self, **attributes)
-        self.nodes = set()
-        self.edges = set()
+        self._nodes = {}
+        self._edges = {}
 
-        try:
-            self.add_nodes(nodes, **nodes_attributes)
-        except TypeError:
-            self.add_nodes(nodes)
+        if nodes:
+            try:
+                self.add_nodes_from(*nodes, **nodes_attributes)
+            except TypeError:
+                self.add_nodes_from(*nodes)
 
-        try:
-            self.add_edges(edges, nodes_attributes=nodes_attributes, **edges_attributes)
-        except TypeError:
-            self.add_edges(edges, nodes_attributes=nodes_attributes)
+        if edges:
+            try:
+                self.add_edges_from(*edges, nodes_attributes=nodes_attributes, **edges_attributes)
+            except TypeError:
+                self.add_edges_from(*edges, nodes_attributes=nodes_attributes)
 
     def __str__(self):
         return str(self.id)
@@ -113,7 +119,8 @@ class Graph(_AttrObject):
         """
         :return: graph's node's get_attrs. type = dictionary valued dictionary.
         """
-        return {node.name: node.get_attrs for node in self.nodes}
+
+        return {node.key: node.get_attrs for node in self.nodes}
 
     # TODO : Might want to use __repr__ or __str__ of _Edge object.
     @property
@@ -121,7 +128,8 @@ class Graph(_AttrObject):
         """
         :return: graph's edge's get_attrs. type = dictionary valued dictionary.
         """
-        return {frozenset(node.name for node in edge.nodes): edge.get_attrs for edge in self.edges}
+
+        return {frozenset(node.key for node in edge.nodes): edge.get_attrs for edge in self.edges}
 
     # TODO : Might want to use __repr__ or __str__.
     @property
@@ -129,352 +137,309 @@ class Graph(_AttrObject):
         """
         :return: graph's get_attrs. type = dictionary valued dictionary.
         """
-        return {'nodes': self.nodes_data, 'edges': self.edges_data}
 
-    def get_node(self, name):
+        return {'_nodes': self.nodes_data, '_edges': self.edges_data}
+
+    def get_node(self, key):
         """
-        Return node named 'name' if exists, else return None.
+        Return node with 'key' if exists, else return None.
 
-        :param name: node's name.
-        :type name: Hashable.
+        :param key: node's key.
+        :type key: Hashable.
         :rtype _Node | None
         """
 
         try:
-            return next(node for node in self.nodes if node.name == name)
-        except StopIteration:
-            return None
-
-    # TODO: Implement more efficiently.
-    def get_nodes(self, names):
-        """
-        Return graph's nodes, s.t. node's name in 'names' if exists, else return None.
-
-        :param names: nodes names.
-        :type names: Iterable[Hashable].
-        :rtype set(_Node | None) | None.
-        """
-
-        try:
-            return {self.get_node(name) for name in set(names)}
+            return self._nodes[key]
         except TypeError as err:
             logger.warning(err)
             return None
+        except KeyError as err:
+            logger.debug(err)
+            return None
 
-    def set_node(self, name, **attributes):
+    def get_nodes_from(self, *keys):
         """
-        Set 'name' named node attributes using 'attributes'.
+        Return graph's _nodes, s.t. node's name in 'names' if exists, else return None.
+        :param keys: _nodes names.
+        :type keys: Iterable[Hashable].
+        :rtype set(_Node | None) | None.
+        """
 
-        :param name: node's name.
-        :type name: Hashable.
+        return {self.get_node(key) for key in keys}
+
+    def set_node(self, key, **attributes):
+        """
+        Set 'key' named node attributes using 'attributes'.
+
+        :param key: node's key.
+        :type key: Hashable.
         :param attributes: node's new attributes.
         :type attributes: Mapping.
         :return: node.
         :rtype: _Node | None
         """
 
-        node = self.get_node(name)
+        node = self.get_node(key)
 
         try:
             node.set_attrs(**attributes)
         except AttributeError as err:
-            logger.warning(err)
+            logger.debug(err)
 
         return node
 
-    def set_nodes(self, names, **attributes):
+    def set_nodes_from(self, *keys, **attributes):
         """
-        Set nodes named from 'names' with 'attributes'.
+        Set _nodes named from 'names' with 'attributes'.
 
-        :param names: nodes names.
-        :type names: Iterable[Hashable]
-        :param attributes: nodes new attributes
+        :param keys: _nodes names.
+        :type keys: Iterable[Hashable]
+        :param attributes: _nodes new attributes
         :type attributes: Mapping.
-        :return: nodes with new attributes.
+        :return: _nodes with new attributes.
         :rtype: Iterable[_Node] | None
         """
 
-        try:
-            return {self.set_node(name, **attributes) for name in set(names)}
-        except TypeError as err:
-            logger.warning(err)
-            return None
+        return {self.set_node(key, **attributes) for key in keys}
 
-    def add_node(self, name=None, override=True, **attributes):
+    def add_node(self, key, overwrite=True, **attributes):
         """
-        Add new node named 'name' if not exists, else override node's attributes if 'override' is True.
+        Add new node named 'key' if not exists, else override node's attributes if 'override' is True.
 
-        :param name: node's name.
-        :type name: Hashable.
-        :param override: if true, & node named 'name' exists, override its attributes.
+        :param key: node's key.
+        :type key: Hashable.
+        :param overwrite: if true, & node named 'key' exists, override its attributes.
         Else return existing node with old attributes.
-        :type override: bool.
+        :type overwrite: bool.
         :param attributes: node's attributes.
         :type attributes: Mapping.
-        :return: node named 'name'.
+        :return: node named 'key'.
         :rtype: _Node.
         """
 
-        node = self.set_node(name, **attributes) if override else self.get_node(name)
-        node = _Node(name, **attributes) if node is None else node
-        self.nodes.add(node)
+        node = self.set_node(key, **attributes) if overwrite else self.get_node(key)
+        if node is None:
+            node = _Node(key, **attributes)
+            self._nodes[key] = node
 
         return node
 
-    # TODO: Try to make implementation more efficient. maybe by using union instead of add to self.nodes.
-    # TODO: For better efficiency, implement get_nodes and set_nodes in O(N) if can, or O(NlogN) using ordering.
-    # TODO: Use these implemented methods to implement add_nodes.
-    def add_nodes(self, names, **attributes):
+    def add_nodes_from(self, *keys, overwrite=True, **attributes):
         """
-        Add new nodes named name, s.t name in 'name', if not exist.
+        Add new _nodes named key, s.t key in 'key', if not exist.
 
-        :param names: nodes names.
-        :type names: Iterable[Hashable].
-        :param attributes: nodes attributes.
+        :param keys: _nodes names.
+        :type keys: Iterable[Hashable].
+        :param overwrite: ??
+        :type overwrite: bool
+        :param attributes: _nodes attributes.
         :type attributes: Mapping.
-        :return: set of nodes.
+        :return: set of _nodes.
         :rtype: set(_Node) | None
         """
 
-        try:
-            return {self.add_node(name, **attributes) for name in names}
-        except TypeError as err:
-            logger.warning(err)
-            return None
+        return {self.add_node(key, overwrite=overwrite, **attributes) for key in keys}
 
-    def del_node(self, name):
+    def del_node(self, key):
         """
-        Delete node named 'name', if exists.
+        Delete node named 'key', if exists.
 
-        :param name: node's name.
-        :type name: _Node.
+        :param key: node's key.
+        :type key: _Node.
         :return: deleted node.
         :rtype: _Node.
         """
 
-        node = self.get_node(name)
+        node = self.get_node(key)
 
         try:
-            self._remove_edges(node.edges)
+            self.del_edges_from(node.edges_keys)
         except AttributeError as err:
-            logger.warning(err)
-
+            logger.debug(err)
         else:
-            self.nodes.discard(node)
+            del self._nodes[key]
 
         return node
 
-    # TODO: Try to make implementation more efficient. maybe by using union instead of add to self.nodes.
-    # TODO: For better efficiency, implement get_nodes and set_nodes in O(N) if can, or O(NlogN) using ordering.
-    # TODO: Use these implemented methods to implement del_nodes
-    def del_nodes(self, names):
+    def del_nodes_from(self, *keys):
         """
-        Delete nodes named name, s.t. name in 'names' from  graph's nodes.
+        Delete _nodes named key, s.t. key in 'names' from  graph's _nodes.
 
-        :param names: nodes names.
-        :type names: Iterable[Hashable]
-        :return: deleted nodes.
+        :param keys: _nodes names.
+        :type keys: Iterable[Hashable]
+        :return: deleted _nodes.
         :rtype: set(_Node).
         """
-        return {self.del_node(name) for name in set(names)}
 
-    # TODO: Might combine this method with get_edge_by_node_objects to one method.
-    def get_edge(self, *nodes_names):  # TODO: Change to support parallel edges.
-        """
-        Return edge from  graph's edges if exists, else returns None
-
-        :param nodes_names: edge'd nodes names.
-        :type nodes_names: Iterable[Hashable].
-        :rtype _Edge | None
-        :note Graph should not contain an edge object with empty set of nodes.
-        """
-
-        return self._get_edge_by_nodes_objects(self.get_nodes(nodes_names))
+        return {self.del_node(key) for key in keys}
 
     # TODO: Doesn't supports multi graph.
-    def _get_edge_by_nodes_objects(self, nodes):
+    def get_edge(self, *key):
         """
-        Return edge from graph's edges s.t edge.nodes == 'nodes'.
+        Return edge from  graph's _edges if exists, else returns None
 
-        :param nodes: edge nodes.
-        :type nodes: Iterable[_Node].
+        :param key: edge'd _nodes names.
+        :type key: Iterable[Hashable].
         :rtype _Edge | None
-        :note: Graph should not contain an edge object with empty set of nodes.
+        :note Graph should not contain an edge object with empty set of _nodes.
         """
 
         try:
-            return next(edge for edge in self.edges if edge.nodes == set(nodes))
-        except (StopIteration, TypeError) as err:
-            logger.warning(err)
+            return self._edges[frozenset(key)]  # TODO: Use of 'frozenset' requires decoupling.
+        except KeyError as err:
+            logger.debug(err)
             return None
 
-    # TODO: Might want to combine set_edge with set_edges.
-    def set_edge(self, names, **attributes):
-        pass
+    def get_edges_from(self, *keys):
 
-    def set_edges(self, names, **attributes):
-        pass
+        try:
+            return {self.get_edge(*key) for key in keys}
+        except TypeError as err:
+            logger.warning(err)
+
+    def set_edge(self, *key, **attributes):
+        """
+         Set 'key' named edge attributes using 'attributes'.
+
+         :param key: edge's key.
+         :type key: Hashable.
+         :param attributes: edge's new attributes.
+         :type attributes: Mapping.
+         :return: edge.
+         :rtype: _Edge | None
+         """
+
+        edge = self.get_edge(*key)
+
+        try:
+            edge.set_attrs(**attributes)
+        except AttributeError as err:
+            logger.debug(err)
+
+        return edge
+
+    def set_edges_from(self, *keys, **attributes):
+        """
+        Set edges named from 'keys' with 'attributes'.
+
+        :param keys: edges keys.
+        :type keys: Iterable[Hashable]
+        :param attributes: _edges new attributes
+        :type attributes: Mapping.
+        :return: _edges with new attributes.
+        :rtype: Iterable[_Edge] | None
+        """
+
+        try:
+            return {self.set_edge(*key, **attributes) for key in keys}
+        except TypeError as err:
+            logger.warning(err)
 
     # TODO: use new syntax for parameters. PEP 3102.
     # TODO: Create a mechanism for users to add 'attributes', handle them and view documentation about them.
-    # TODO: move 'nodes_attributes' & 'parallel' from function declaration into 'attributes' handling.
-    # TODO: Add 'override' option like in 'add_node'.
-    # TODO: on setting edge as parallel, ensure all other edges are parallel.
-    def add_edge(self, *nodes_names, nodes_attributes=None, parallel=False, override=True, **attributes):
+    # TODO: move 'nodes_attributes' & 'multi' from function declaration into 'attributes' handling.
+    # TODO: Add 'overwrite' option like in 'add_node'.
+    # TODO: on setting edge as multi, ensure all other _edges are multi.
+    def add_edge(self, *key, nodes_attributes=None, multi=False, overwrite=True, **attributes):
         """
-        Add new edge with nodes named 'nodes_names' if not exists or 'parallel' is True.
+        Add new edge with _nodes named 'key' if not exists or 'multi' is True.
 
-        If edge exists & 'parallel' is false, return existing edge.
-        :param nodes_names: edge's nodes names.
-        :type nodes_names: Iterable[Hashable]
-        :param nodes_attributes: edge's nodes attributes.
+        If edge exists & 'multi' is false, return existing edge.
+        :param key: edge's _nodes names.
+        :type key: Iterable[Hashable]
+        :param nodes_attributes: edge's _nodes attributes.
         :type nodes_attributes: Mapping | None.
-        :param parallel: parallel edge.
-        :type parallel: bool.
-        :param override: if true, overrides edge's attributes.
-        :type override: bool
+        :param multi: multi edge.
+        :type multi: bool.
+        :param overwrite: if true, overrides edge's attributes.
+        :type overwrite: bool
         :param attributes: edge's attributes.
         :type attributes: Mapping.
         :return: edge if received valid arguments, None otherwise.
         :rtype: _Edge.
         """
 
-        if hasattr(self, 'directed') and self.directed and 'exit_nodes' not in attributes:
-            logger.error("This is a directed graph. 'attributes' must specify 'exit_nodes'")
-            raise ValueError("This is a directed graph. 'attributes' must specify 'exit_nodes'")
+        edge = self.set_edge(*key) if overwrite else self.get_edge(*key)
 
-        existing_nodes = self.get_nodes(nodes_names)
-        edge = self._get_edge_by_nodes_objects(existing_nodes)
-
-        if edge is None or parallel:
+        if edge is None or multi:
+            existing_nodes = set(self.get_nodes_from(*key))
             existing_nodes.discard(None)
-            new_nodes_names = set(nodes_names) - {node.name for node in existing_nodes}
-            edge = _Edge(new_nodes_names, existing_nodes, nodes_attributes, parallel=parallel, **attributes)
-            self.nodes |= edge.nodes
-            self.edges.add(edge)
+            new_nodes_keys = set(key) - {node.key for node in existing_nodes}
+            new_key = new_nodes_keys | existing_nodes
 
-        elif override:
-            # TODO: for node in nodes_names: node.set_attrs(nodes_attributes)
+            edge = _Edge(new_key, nodes_attributes, multi=multi, **attributes)
+            self._edges[edge.key] = edge
+            for node in edge.nodes:
+                self._nodes[node.key] = node
+
+        elif overwrite:
+            # TODO: for node in key: node.set_attrs(nodes_attributes)
             edge.set_attrs(**attributes)
 
         return edge
 
-    # TODO: Try to make implementation more efficient. maybe by using union instead of add to self.edges.
-    def add_edges(self, edges_names, **attributes):
+    def add_edges_from(self, *keys, **attributes):
         """
-        Add new edges from edges_names.
+        Add new _edges from edges_names.
 
-        :param edges_names: Each edge_name contains nodes_names.
-        :type edges_names: Iterable[Iterable[Hashable]]
-        :param attributes: edges attributes.
+        :param keys: Each edge_name contains key.
+        :type keys: Iterable[Iterable[Hashable]]
+        :param attributes: _edges attributes.
         :type attributes: Iterable[Mapping]
-        :return: set of edges.
+        :return: set of _edges.
         :rtype: set(_Edge) | None
         """
 
         try:
-            return {self.add_edge(*nodes_names, **attributes) for nodes_names in edges_names}
+            return {self.add_edge(*key, **attributes) for key in keys}
         except TypeError as err:
             logger.warning(err)
-            return None
 
-    def _remove_edge(self, edge):
+    def del_edge(self, *key):
         """
-        Remove edge from  graph's edges.
+        Delete edge with 'names' _nodes.
 
-        :param edge: edge to be removed.
-        :type edge: _Edge | None.
-        :return: removed edge if found in graph's edges. None otherwise.
-        :rtype: _Edge | None.
-        """
-
-        try:
-            for node in edge.nodes:
-                node.edges.remove(edge)
-        except AttributeError as err:
-            logger.warning(err)
-            return None
-        else:
-            self.edges.remove(edge)
-
-        return edge
-
-    def _remove_edges(self, edges):
-        """
-        Remove edges from self.edges.
-
-        Raises AttributeError if edge not of _Edge type.
-        :param edges: edges to be removed.
-        :type edges: Iterable[_Edge]
-        :return: set of removed edges.
-        :rtype: set(_Edge) | None
-        """
-
-        try:
-            return {self._remove_edge(edge) for edge in set(edges)}
-        except TypeError as err:
-            logger.warning(err)
-            return None
-
-    def del_edge(self, *names):
-        """
-        Delete edge with 'names' nodes.
-
-        :param names: edge's nodes names.
-        :type names: Iterable[Hashable]
+        :param key: edge's _nodes names.
+        :type key: Iterable[Hashable]
         :return: deleted edge.
         :rtype: _Edge.
         """
-        return self._remove_edge(self.get_edge(*names))
 
-    def del_edges(self, nodes_names_iterable):
+        edge = self.get_edge(*key)
+
+        try:
+            for node in edge.nodes:
+                node.del_edge(*key)
+        except AttributeError as err:
+            logger.debug(err)
+        else:
+            del self._edges[edge.key]
+
+        return edge
+
+    def del_edges_from(self, *keys):
         """
-        Delete edges between 'names_iterable' nodes.
+        Delete _edges between 'names_iterable' _nodes.
 
-        :param nodes_names_iterable: iterable of Hashable type.
-        :type nodes_names_iterable: Iterable[Iterable[Hashable]]
-        :return: deleted edges.
+        :param keys: iterable of Hashable type.
+        :type keys: Iterable[Iterable[Hashable]]
+        :return: deleted _edges.
         :rtype: set(_Edge) | None
         """
+
         try:
-            return {self.del_edge(*names) for names in set(nodes_names_iterable)}
+            return {self.del_edge(*key) for key in keys}
         except TypeError as err:
             logger.warning(err)
-            return None
 
-    def set_attr(self, attr, val):
-        """
-        Set graph's attributes.
+    @property
+    def nodes(self):
+        return self._nodes.values()
 
-        :param attr: type of strings.
-        :param val: attribute value.
-        """
-        _AttrObject.set_attr(self, attr, val)
-        if attr == 'directed' and val is True:
-            _Edge.exit_nodes = set()
-            _Edge.enter_nodes = set()
-            _Node.exit_edges = set()
-            _Node.enter_edges = set()
-            _Node.exit_degree = property(lambda node_self: len(node_self.exit_edges))
-            _Node.enter_degree = property(lambda node_self: len(node_self.enter_edges))
-
-        if attr == 'directed' and val is False:
-            self.del_attr('directed')
-
-    def del_attr(self, attr):
-        """
-        Delete graph's attribute.
-
-        :param attr: type of strings.
-        """
-        _AttrObject.del_attr(self, attr)
-        if attr == 'directed':
-            delattr(_Edge, 'exit_nodes')
-            delattr(_Edge, 'enter_nodes')
-            delattr(_Node, 'exit_edges')
-            delattr(_Node, 'enter_edges')
-            delattr(_Node, 'exit_degree')
-            delattr(_Node, 'enter_degree')
+    @property
+    def edges(self):
+        return self._edges.values()
 
 
 class _Edge(_AttrObject):
@@ -483,126 +448,63 @@ class _Edge(_AttrObject):
     """
 
     # TODO: Try make implementation better.
-    def __init__(self, nodes_names=None, nodes=None, nodes_attributes=None, **attributes):
+    def __init__(self, nodes, nodes_attributes=None, **attributes):
         """
         Constructor
 
-        Construct new edge using newly created nodes from 'nodes_names' and existing 'nodes' objects.
+        Construct new edge using newly created _nodes from 'key' and existing '_nodes' objects.
         Set all node objects (newly created & existing ones) attributes using 'nodes_attributes'.
         Existing node attributes will be overwritten.
         Set edge attributes using 'attributes'.
         Supports: hyper graph, multi graph.
 
         :todo check if need to change all docstrings to 'parameter' or 'arg'.Check also 'numpy docstring conventions'.
-        :param nodes_names: names of edge's nodes.
-        :type nodes_names: Iterable[Hashable] | None
-        :param nodes: nodes from graph.
-        :type nodes: Iterable[_Node] | None
-        :param nodes_attributes: default nodes attributes to be used.
+        :param nodes: _nodes from graph.
+        :type nodes: Iterable[_Node | Hashable]
+        :param nodes_attributes: default _nodes attributes to be used.
         :type nodes_attributes: Mapping.
         """
 
         _AttrObject.__init__(self, **attributes)
-        self._nodes = None
-        self.nodes = nodes
-        self._nodes_names = None
-        self.nodes_names = nodes_names
+        if not nodes:
+            logger.exception("Non empty '_nodes' Iterable[_Node | Hashable] expected,"
+                             " got {0}".format(type(nodes).__name__))
+            raise TypeError("Non empty '_nodes' Iterable[_Node | Hashable] expected,"
+                            " got {0}".format(type(nodes).__name__))
 
-        if not self.nodes_names and not self.nodes:
-            logger.error("Either 'nodes_names' or 'nodes' must be a non empty Iterable")
-            raise ValueError("Either 'nodes_names' or 'nodes' must be a non empty Iterable")
+        self._nodes = {node.key: node for node in filter(lambda node: isinstance(node, _Node), nodes)}
 
-        nodes_attributes = {} if nodes_attributes is None else nodes_attributes
-        new_nodes = None if self.nodes_names is None else {_Node(node_name, **nodes_attributes)
-                                                           for node_name in self.nodes_names}
-        self.nodes = self.nodes or new_nodes if not (self.nodes and new_nodes) else new_nodes | self.nodes
+        try:
+            self._nodes.update({node_key: _Node(node_key, **nodes_attributes) for node_key in
+                                filter(lambda node: not isinstance(node, _Node), nodes)})
+        except TypeError as err:
+            logger.debug(err)
+            self._nodes.update({node_key: _Node(node_key) for node_key in
+                                filter(lambda node: not isinstance(node, _Node), nodes)})
 
         for node in self.nodes:
-            node.edges.add(self)
+            node.attach_edge(self)
 
     def __str__(self):
         return str(self.id)
 
-    def set_attr(self, attr, val):
-        """
-        Set edge's attributes.
-        """
-        # if attr == 'nodes_attributes':
-        #     for node in self.nodes:
-        #         node.set_attrs(val)
+    # TODO: Currently returns same as self._nodes. Will be changed when Multi support will be added.
+    @property
+    def key(self):
+        return frozenset(self._nodes.keys())
 
-        if attr == 'exit_nodes' and bool(set(val)):
-            exit_nodes_names = set(val)
-            exit_nodes = set(filter(lambda node: node.name in exit_nodes_names , self.nodes))
-            enter_nodes = self.nodes - exit_nodes
+    @property
+    def nodes(self):
+        return self._nodes.values()
 
-            self.exit_nodes = exit_nodes
-            self.enter_nodes = self.nodes - exit_nodes
-
-            for exit_node in exit_nodes:
-                if not hasattr(exit_node, 'exit_edges'):
-                    exit_node.exit_edges = set()
-                exit_node.exit_edges.add(self)
-                exit_node.exit_degree = len(exit_node.exit_edges)
-
-            for enter_node in enter_nodes:
-                if not hasattr(enter_node, 'enter_edges'):
-                    enter_node.enter_edges = set()
-                enter_node.enter_edges.add(self)
-                enter_node.enter_degree = len(enter_node.enter_edges)
-
-#            _Node.exit_degree = property(lambda node_self: len(node_self.exit_edges))
-#            _Node.enter_degree = property(lambda node_self: len(node_self.enter_edges))
-
-        else:
-            _AttrObject.set_attr(self, attr, val)
-
-    def del_attr(self, attr):
-        """
-        Delete edge's attribute.
-
-        :param attr: type of strings.
-        """
-        if attr == 'direction':
-            delattr(self, 'directed')
-            delattr(self, 'exit_nodes')
-            delattr(self, 'enter_nodes')
-        else:
-            _AttrObject.del_attr(attr)
+    # TODO: Why I am not using this? check if necessary.
+    @property
+    def nodes_keys(self):
+        return self._nodes.keys()
 
     @property
     def is_loop(self):
         return True if len(self.nodes) == 1 else False
-
-    @property
-    def nodes_names(self):
-        return self._nodes_names
-
-    @nodes_names.setter
-    def nodes_names(self, names):
-        try:
-            self._nodes_names = None if names is None else set(names)
-        except TypeError as err:
-            logger.warning(err)
-
-    @nodes_names.deleter
-    def nodes_names(self):
-        del self._nodes_names
-
-    @property
-    def nodes(self):
-        return self._nodes
-
-    @nodes.setter
-    def nodes(self, nodes):
-        try:
-            self._nodes = None if nodes is None else set(nodes)
-        except TypeError as err:
-            logger.warning(err)
-
-    @nodes.deleter
-    def nodes(self):
-        del self._nodes
 
 
 class _Node(_AttrObject):
@@ -611,38 +513,57 @@ class _Node(_AttrObject):
     """
 
     # TODO: Switch to new syntax with * to declare positional parameters.
-    def __init__(self, name=None, **attributes):
+    # TODO: If changed may I use attributes instead of **attributes?
+    def __init__(self, key, **attributes):
         """
         Constructor
 
-        :type name: Hashable
+        :type key: Hashable
         :type attributes: Mapping
         :invariant: self.degree >= 0
         """
 
+        if not isinstance(key, Hashable):
+            logger.exception("Hashable 'key' expected, got {0}".format(type(key).__name__))
+            raise TypeError("Hashable 'key' expected, got {0}".format(type(key).__name__))
+
         _AttrObject.__init__(self, **attributes)
-        self._name = None
-        self.name = name
-        self.edges = set()
+        self.key = key
+        self.edges = {}
 
     def __str__(self):
         return str(self.id)
 
     @property
-    def name(self):
-        return self._name
+    def edges(self):
+        return self._edges.values()
 
-    @name.setter
-    def name(self, name):
-        if not isinstance(name, Hashable):
-            logger.error("Hashable 'name' expected, got {0}".format(type(name).__name__))
-            raise TypeError("Hashable 'name' expected, got {0}".format(type(name).__name__))
+    @edges.setter
+    def edges(self, edges):
+        try:
+            self._edges = {edge.key: edge for edge in set(edges)}
+        except (TypeError, AttributeError) as err:
+            self._edges = self._edges if self._edges else {}
+            logger.warning(err)
 
-        self._name = id(self) if name is None else name
+    @property
+    def edges_keys(self):
+        return self._edges.keys()
 
-    @name.deleter
-    def name(self):
-        del self._name
+    def attach_edge(self, edge):
+        try:
+            self._edges[edge.key] = edge
+        except AttributeError as err:
+            logger.warning(err)
+
+    # TODO: Might want to add a return value.
+    def del_edge(self, *key):
+        try:
+            del self._edges[key]
+        except TypeError as err:
+            logger.warning(err)
+        except KeyError as err:
+            logger.debug(err)
 
     @property
     def degree(self):
