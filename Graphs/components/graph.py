@@ -293,10 +293,7 @@ class Graph(_AttrObject):
 
     def get_edges_from(self, *keys):
 
-        try:
-            return {self.get_edge(*key) for key in keys}
-        except TypeError as err:
-            logger.warning(err)
+        return {self.get_edge(*key) for key in keys}
 
     def set_edge(self, *key, **attributes):
         """
@@ -331,17 +328,15 @@ class Graph(_AttrObject):
         :rtype: Iterable[_Edge] | None
         """
 
-        try:
-            return {self.set_edge(*key, **attributes) for key in keys}
-        except TypeError as err:
-            logger.warning(err)
+        return {self.set_edge(*key, **attributes) for key in keys}
 
+    # TODO: Improve implementation.
     # TODO: use new syntax for parameters. PEP 3102.
     # TODO: Create a mechanism for users to add 'attributes', handle them and view documentation about them.
     # TODO: move 'nodes_attributes' & 'multi' from function declaration into 'attributes' handling.
     # TODO: Add 'overwrite' option like in 'add_node'.
     # TODO: on setting edge as multi, ensure all other _edges are multi.
-    def add_edge(self, *key, nodes_attributes=None, multi=False, overwrite=True, **attributes):
+    def add_edge(self, *key, overwrite_nodes=True, nodes_attributes=None, multi=False, overwrite=True, **attributes):
         """
         Add new edge with _nodes named 'key' if not exists or 'multi' is True.
 
@@ -360,7 +355,7 @@ class Graph(_AttrObject):
         :rtype: _Edge.
         """
 
-        edge = self.set_edge(*key) if overwrite else self.get_edge(*key)
+        edge = self.set_edge(*key, **attributes) if overwrite else self.get_edge(*key)
 
         if edge is None or multi:
             existing_nodes = set(self.get_nodes_from(*key))
@@ -368,14 +363,10 @@ class Graph(_AttrObject):
             new_nodes_keys = set(key) - {node.key for node in existing_nodes}
             new_key = new_nodes_keys | existing_nodes
 
-            edge = _Edge(new_key, nodes_attributes, multi=multi, **attributes)
+            edge = _Edge(new_key, overwrite_nodes, nodes_attributes, multi=multi, **attributes)
             self._edges[edge.key] = edge
             for node in edge.nodes:
                 self._nodes[node.key] = node
-
-        elif overwrite:
-            # TODO: for node in key: node.set_attrs(nodes_attributes)
-            edge.set_attrs(**attributes)
 
         return edge
 
@@ -391,10 +382,7 @@ class Graph(_AttrObject):
         :rtype: set(_Edge) | None
         """
 
-        try:
-            return {self.add_edge(*key, **attributes) for key in keys}
-        except TypeError as err:
-            logger.warning(err)
+        return {self.add_edge(*key, **attributes) for key in keys}
 
     def del_edge(self, *key):
         """
@@ -428,10 +416,7 @@ class Graph(_AttrObject):
         :rtype: set(_Edge) | None
         """
 
-        try:
-            return {self.del_edge(*key) for key in keys}
-        except TypeError as err:
-            logger.warning(err)
+        return {self.del_edge(*key) for key in keys}
 
     @property
     def nodes(self):
@@ -447,8 +432,8 @@ class _Edge(_AttrObject):
     classdocs
     """
 
-    # TODO: Try make implementation better.
-    def __init__(self, nodes, nodes_attributes=None, **attributes):
+    # TODO: Improve implementation.
+    def __init__(self, nodes, overwrite=True, nodes_attributes=None, **attributes):
         """
         Constructor
 
@@ -475,6 +460,10 @@ class _Edge(_AttrObject):
         self._nodes = {node.key: node for node in filter(lambda node: isinstance(node, _Node), nodes)}
 
         try:
+            if overwrite:
+                for node in self.nodes:
+                    node.set_attrs(**nodes_attributes)
+
             self._nodes.update({node_key: _Node(node_key, **nodes_attributes) for node_key in
                                 filter(lambda node: not isinstance(node, _Node), nodes)})
         except TypeError as err:
