@@ -72,39 +72,55 @@
 <p>classdocs</p>
 <dl class="method">
 <dt id="components.graph.Graph.add_edge">
-<code class="descname">add_edge</code><span class="sig-paren">(</span><em>*nodes_names</em>, <em>nodes_attributes=None</em>, <em>parallel=False</em>, <em>override=True</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.add_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.add_edge" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add new edge with nodes named ‘nodes_names’ if not exists or ‘parallel’ is True.</p>
-<p>If edge exists &amp; ‘parallel’ is false, return existing edge.
-:param nodes_names: edge’s nodes names.
-:type nodes_names: Iterable[Hashable]
-:param nodes_attributes: edge’s nodes attributes.
-:type nodes_attributes: Mapping | None.
-:param parallel: parallel edge.
-:type parallel: bool.
-:param override: if true, overrides edge’s attributes.
-:type override: bool
-:param attributes: edge’s attributes.
-:type attributes: Mapping.
-:return: edge if received valid arguments, None otherwise.
-:rtype: _Edge.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="components.graph.Graph.add_edges">
-<code class="descname">add_edges</code><span class="sig-paren">(</span><em>edges_names</em>, <em>nodes_attributes={}</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.add_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.add_edges" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add new edges with objects from names_iterable as their get_attrs, if not exist.</p>
+<code class="descname">add_edge</code><span class="sig-paren">(</span><em>*key</em>, <em>overwrite_nodes=True</em>, <em>nodes_attributes=None</em>, <em>multi=False</em>, <em>overwrite=True</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.add_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.add_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add edge with ‘key’.</p>
+<p>Set edge’s nodes attributes using ‘nodes_attributes’.
+If ‘overwrite_nodes’ is True, existing nodes attributes will be overwritten.
+Set edge’s attributes using ‘attributes’.
+If ‘overwrite’ is True, edge’s attributes will be overwritten.
+If ‘multi’ is True, allow parallel edges.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>edges_names</strong> (<em>Iterable</em><em>[</em><em>Iterable</em><em>[</em><em>Hashable</em><em>]</em><em>]</em>) – Each edge_name contains nodes_names.</li>
-<li><strong>nodes_attributes</strong> – iterable of key-value pairs.</li>
-<li><strong>attributes</strong> – iterable of sequences of key-value pairs.</li>
+<li><strong>key</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em>) – edge’s key.</li>
+<li><strong>overwrite_nodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – enable edge’s nodes attributes overwriting.</li>
+<li><strong>nodes_attributes</strong> (<em>Mapping | None.</em>) – edge’s _nodes attributes.</li>
+<li><strong>multi</strong> (<em>bool.</em>) – enable parallel edge.</li>
+<li><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – enable edge’s attributes overwriting.</li>
+<li><strong>attributes</strong> (<em>Mapping.</em>) – edge’s attributes.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">set(edges). for edge in edges, type(edge) = _Edge</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">edge.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">_Edge.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="components.graph.Graph.add_edges_from">
+<code class="descname">add_edges_from</code><span class="sig-paren">(</span><em>*keys</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.add_edges_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.add_edges_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add edges with ‘keys’ using ‘attributes’.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>keys</strong> (<em>Iterable</em><em>[</em><em>Iterable</em><em>[</em><em>Hashable</em><em>]</em><em>]</em>) – edges keys.</li>
+<li><strong>attributes</strong> (<em>Iterable</em><em>[</em><em>Mapping</em><em>]</em>) – edges attributes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">edges.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.7)">set</a>(_Edge)</p>
 </td>
 </tr>
 </tbody>
@@ -113,44 +129,47 @@
 
 <dl class="method">
 <dt id="components.graph.Graph.add_node">
-<code class="descname">add_node</code><span class="sig-paren">(</span><em>name=None</em>, <em>override=True</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.add_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.add_node" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add new node named ‘name’ if not exists, else override node’s attributes if ‘override’ is True.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>Hashable.</em>) – node’s name.</li>
-<li><strong>override</strong> – if true, &amp; node named ‘name’ exists, override its attributes.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p>Else return existing node with old attributes.
-:type override: bool.
-:param attributes: node’s attributes.
-:type attributes: Mapping.
-:return: node named ‘name’.
-:rtype: _Node.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="components.graph.Graph.add_nodes">
-<code class="descname">add_nodes</code><span class="sig-paren">(</span><em>names</em>, <em>override=True</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.add_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.add_nodes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add new nodes named name, s.t name in ‘name’, if not exist.</p>
+<code class="descname">add_node</code><span class="sig-paren">(</span><em>key</em>, <em>overwrite=True</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.add_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.add_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add node with ‘key’.</p>
+<p>Set node’s attributes using ‘attributes’.
+If ‘overwrite’ is True, node’s attributes will be overwritten.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>names</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em><em></em>) – nodes names.</li>
-<li><strong>attributes</strong> (<em>Mapping.</em>) – nodes attributes.</li>
-<li><strong>override</strong> (<em>bool.</em>) – if true, override existing node’s attributes</li>
+<li><strong>key</strong> (<em>Hashable.</em>) – node’s key.</li>
+<li><strong>overwrite</strong> (<em>bool.</em>) – enable node’s attributes overwriting.</li>
+<li><strong>attributes</strong> (<em>Mapping.</em>) – node’s attributes.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">set of added nodes.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">added node.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">_Node.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="components.graph.Graph.add_nodes_from">
+<code class="descname">add_nodes_from</code><span class="sig-paren">(</span><em>*keys</em>, <em>overwrite=True</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.add_nodes_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.add_nodes_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add nodes with ‘keys’ using ‘attributes’.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>keys</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em><em></em>) – nodes keys.</li>
+<li><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – enable nodes attributes overwriting.</li>
+<li><strong>attributes</strong> (<em>Mapping.</em>) – nodes attributes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">added nodes.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.7)">set</a>(_Node)</p>
@@ -161,28 +180,14 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="components.graph.Graph.del_attr">
-<code class="descname">del_attr</code><span class="sig-paren">(</span><em>attr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.del_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.del_attr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete graph’s attribute.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>attr</strong> – type of strings.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="components.graph.Graph.del_edge">
-<code class="descname">del_edge</code><span class="sig-paren">(</span><em>*names</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.del_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.del_edge" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete edge with ‘names’ nodes.</p>
+<code class="descname">del_edge</code><span class="sig-paren">(</span><em>*key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.del_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.del_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete ‘key’ edge from graph’s edges.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>names</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em>) – edge’s nodes names.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em>) – edge’s _nodes names.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">deleted edge.</td>
 </tr>
@@ -193,18 +198,18 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="components.graph.Graph.del_edges">
-<code class="descname">del_edges</code><span class="sig-paren">(</span><em>nodes_names_iterable</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.del_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.del_edges" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete edges between ‘names_iterable’ nodes.</p>
+<dt id="components.graph.Graph.del_edges_from">
+<code class="descname">del_edges_from</code><span class="sig-paren">(</span><em>*keys</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.del_edges_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.del_edges_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete edges with ‘keys’.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nodes_names_iterable</strong> (<em>Iterable</em><em>[</em><em>Iterable</em><em>[</em><em>Hashable</em><em>]</em><em>]</em>) – iterable of Hashable type.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>keys</strong> (<em>Iterable</em><em>[</em><em>Iterable</em><em>[</em><em>Hashable</em><em>]</em><em>]</em>) – edges keys.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">deleted edges.</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.7)">set</a>(_Edge) | None</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.7)">set</a>(_Edge)</td>
 </tr>
 </tbody>
 </table>
@@ -212,35 +217,50 @@
 
 <dl class="method">
 <dt id="components.graph.Graph.del_node">
-<code class="descname">del_node</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.del_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.del_node" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete node named ‘name’, if exists.</p>
+<code class="descname">del_node</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.del_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.del_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete node with ‘key’.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>_Node.</em>) – node’s name.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>Hashable.</em>) – node’s key.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">deleted node.</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">_Node.</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">_Node | None</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="components.graph.Graph.del_nodes">
-<code class="descname">del_nodes</code><span class="sig-paren">(</span><em>names</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.del_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.del_nodes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete nodes named name, s.t. name in ‘names’ from  graph’s nodes.</p>
+<dt id="components.graph.Graph.del_nodes_from">
+<code class="descname">del_nodes_from</code><span class="sig-paren">(</span><em>*keys</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.del_nodes_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.del_nodes_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete graph’s nodes with ‘keys’.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>names</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em>) – nodes names.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>keys</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em>) – nodes keys.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">deleted nodes.</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.7)">set</a>(_Node)</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.7)">set</a>(_Node | None)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="components.graph.Graph.edges">
+<code class="descname">edges</code><a class="headerlink" href="#components.graph.Graph.edges" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">graph’s edges.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Iterable[_Edge]</td>
 </tr>
 </tbody>
 </table>
@@ -274,29 +294,48 @@
 
 <dl class="method">
 <dt id="components.graph.Graph.get_edge">
-<code class="descname">get_edge</code><span class="sig-paren">(</span><em>*nodes_names</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.get_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.get_edge" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return edge from  graph’s edges if exists, else returns None</p>
+<code class="descname">get_edge</code><span class="sig-paren">(</span><em>*key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.get_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.get_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return graph’s edge with ‘key’, or None if ‘key’ is not found.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nodes_names</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em><em></em>) – edge’d nodes names.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em><em></em>) – edge’s key.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">edge.</td>
 </tr>
 </tbody>
 </table>
-<p>:rtype _Edge | None
-:note Graph should not contain an edge object with empty set of nodes.</p>
+<p>:rtype _Edge | None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="components.graph.Graph.get_edges_from">
+<code class="descname">get_edges_from</code><span class="sig-paren">(</span><em>*keys</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.get_edges_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.get_edges_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return graph’s edges with ‘keys’, or None for each non existing key.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>keys</strong> (<em>Iterable</em><em>[</em><em>Iterable</em><em>[</em><em>Hashable</em><em>]</em><em>]</em>) – edges keys.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">edges</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.7)">set</a>(_Edge | None)</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="components.graph.Graph.get_node">
-<code class="descname">get_node</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.get_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.get_node" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return node named ‘name’ if exists, else return None.</p>
+<code class="descname">get_node</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.get_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.get_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return graph’s node with ‘key’ if exists, else return None.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>Hashable.</em>) – node’s name.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>Hashable.</em>) – node’s key.</td>
 </tr>
 </tbody>
 </table>
@@ -304,18 +343,35 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="components.graph.Graph.get_nodes">
-<code class="descname">get_nodes</code><span class="sig-paren">(</span><em>names</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.get_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.get_nodes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return graph’s nodes, s.t. node’s name in ‘names’ if exists, else return None.</p>
+<dt id="components.graph.Graph.get_nodes_from">
+<code class="descname">get_nodes_from</code><span class="sig-paren">(</span><em>*keys</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.get_nodes_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.get_nodes_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return graph’s nodes with ‘keys’.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>names</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em><em></em>) – nodes names.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>keys</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em><em></em>) – nodes keys.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">nodes.</td>
 </tr>
 </tbody>
 </table>
-<p>:rtype set(_Node | None) | None.</p>
+<p>:rtype set(_Node | None)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="components.graph.Graph.nodes">
+<code class="descname">nodes</code><a class="headerlink" href="#components.graph.Graph.nodes" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">graph’s nodes.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Iterable[_Node]</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
@@ -332,17 +388,23 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="components.graph.Graph.set_attr">
-<code class="descname">set_attr</code><span class="sig-paren">(</span><em>attr</em>, <em>val</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.set_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.set_attr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set graph’s attributes.</p>
+<dt id="components.graph.Graph.set_edge">
+<code class="descname">set_edge</code><span class="sig-paren">(</span><em>*key</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.set_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.set_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set edge with ‘key’ using ‘attributes’.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>attr</strong> – type of strings.</li>
-<li><strong>val</strong> – attribute value.</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>key</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em><em></em>) – edge’s key.</li>
+<li><strong>attributes</strong> (<em>Mapping.</em>) – edge’s attributes.</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">edge.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">_Edge | None</p>
 </td>
 </tr>
 </tbody>
@@ -350,26 +412,40 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="components.graph.Graph.set_edge">
-<code class="descname">set_edge</code><span class="sig-paren">(</span><em>names</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.set_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.set_edge" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="components.graph.Graph.set_edges">
-<code class="descname">set_edges</code><span class="sig-paren">(</span><em>names</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.set_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.set_edges" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="components.graph.Graph.set_node">
-<code class="descname">set_node</code><span class="sig-paren">(</span><em>name</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.set_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.set_node" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set ‘name’ named node attributes using ‘attributes’.</p>
+<dt id="components.graph.Graph.set_edges_from">
+<code class="descname">set_edges_from</code><span class="sig-paren">(</span><em>*keys</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.set_edges_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.set_edges_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set edges with ‘keys’ using ‘attributes’.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> (<em>Hashable.</em>) – node’s name.</li>
-<li><strong>attributes</strong> (<em>Mapping.</em>) – node’s new attributes.</li>
+<li><strong>keys</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em>) – edges keys.</li>
+<li><strong>attributes</strong> (<em>Mapping.</em>) – edges attributes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">set edges.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Iterable[_Edge]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="components.graph.Graph.set_node">
+<code class="descname">set_node</code><span class="sig-paren">(</span><em>key</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.set_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.set_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set node with ‘key’ using ‘attributes’.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>key</strong> (<em>Hashable.</em>) – node’s key.</li>
+<li><strong>attributes</strong> (<em>Mapping.</em>) – node’s attributes.</li>
 </ul>
 </td>
 </tr>
@@ -384,23 +460,23 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="components.graph.Graph.set_nodes">
-<code class="descname">set_nodes</code><span class="sig-paren">(</span><em>names</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.set_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.set_nodes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set nodes named from ‘names’ with ‘attributes’.</p>
+<dt id="components.graph.Graph.set_nodes_from">
+<code class="descname">set_nodes_from</code><span class="sig-paren">(</span><em>*keys</em>, <em>**attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#Graph.set_nodes_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.Graph.set_nodes_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set nodes with ‘keys’ using ‘attributes’.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>names</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em>) – nodes names.</li>
-<li><strong>attributes</strong> (<em>Mapping.</em>) – nodes new attributes</li>
+<li><strong>keys</strong> (<em>Iterable</em><em>[</em><em>Hashable</em><em>]</em>) – nodes keys.</li>
+<li><strong>attributes</strong> (<em>Mapping.</em>) – nodes attributes.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">nodes with new attributes.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">_nodes.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Iterable[_Node] | None</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Iterable[_Node]</p>
 </td>
 </tr>
 </tbody>
@@ -408,11 +484,6 @@
 </dd></dl>
 
 </dd></dl>
-
-<dl class="function">
-<dt id="components.graph.print_obj_error">
-<code class="descclassname">components.graph.</code><code class="descname">print_obj_error</code><span class="sig-paren">(</span><em>obj</em>, <em>string=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/components/graph.html#print_obj_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#components.graph.print_obj_error" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </div>
 
