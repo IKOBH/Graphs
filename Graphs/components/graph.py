@@ -4,15 +4,15 @@ Created on Dec 13, 2017
 :author: iko
 """
 
-import yaml
+from collections import Hashable, Counter
 import logging.config
+import yaml
 from definitions import CONFIG_PATH
-from collections import Hashable, Iterable, Mapping
 
 with open(str(CONFIG_PATH)) as f:
-    config_dict = yaml.load(f)
+    configuration = yaml.load(f)
 
-logging.config.dictConfig(config_dict)
+logging.config.dictConfig(configuration)
 logger = logging.getLogger(__name__)
 
 
@@ -81,6 +81,9 @@ class _AttrObject(object):
 # TODO: use new syntax for parameters. PEP 3102.
 # TODO: check if need to change all docstrings to 'parameter' or 'arg'.
 # TODO: Check also 'numpy docstring conventions'.
+# TODO: change  '**attributes' to 'attributes'
+# TODO: Create a mechanism for users to add 'attributes', handle them and view documentation about them.
+# TODO: use named tuples for edges keys(first is '_edges_multiplicity', second is 'nodes_keys')
 class Graph(_AttrObject):
     """
     classdocs
@@ -105,18 +108,23 @@ class Graph(_AttrObject):
         _AttrObject.__init__(self, **attributes)
         self._nodes = {}
         self._edges = {}
+        self._edges_multiplicity = Counter()
 
-        if nodes:
+        try:
+            self.add_nodes_from(*nodes, **nodes_attributes)
+        except TypeError:
             try:
-                self.add_nodes_from(*nodes, **nodes_attributes)
-            except TypeError:
                 self.add_nodes_from(*nodes)
+            except TypeError as err:
+                logger.debug(err)
 
-        if edges:
+        try:
+            self.add_edges_from(*edges, nodes_attributes=nodes_attributes, **edges_attributes)
+        except TypeError:
             try:
-                self.add_edges_from(*edges, nodes_attributes=nodes_attributes, **edges_attributes)
-            except TypeError:
                 self.add_edges_from(*edges, nodes_attributes=nodes_attributes)
+            except TypeError as err:
+                logger.debug(err)
 
     def __str__(self):
         return str(self.id)
@@ -150,9 +158,9 @@ class Graph(_AttrObject):
 
     def get_node(self, key):
         """
-        Return graph's node with 'key' if exists, else return None.
+        Return graph's node with '_key' if exists, else return None.
 
-        :param key: node's key.
+        :param key: node's _key.
         :type key: Hashable.
         :rtype _Node | None
         """
@@ -180,9 +188,9 @@ class Graph(_AttrObject):
 
     def set_node(self, key, **attributes):
         """
-        Set node with 'key' using 'attributes'.
+        Set node with '_key' using 'attributes'.
 
-        :param key: node's key.
+        :param key: node's _key.
         :type key: Hashable.
         :param attributes: node's attributes.
         :type attributes: Mapping.
@@ -215,12 +223,12 @@ class Graph(_AttrObject):
 
     def add_node(self, key, overwrite=True, **attributes):
         """
-        Add node with 'key'.
+        Add node with '_key'.
 
         Set node's attributes using 'attributes'.
         If 'overwrite' is True, node's attributes will be overwritten.
 
-        :param key: node's key.
+        :param key: node's _key.
         :type key: Hashable.
         :param overwrite: enable node's attributes overwriting.
         :type overwrite: bool.
@@ -237,7 +245,7 @@ class Graph(_AttrObject):
 
         return node
 
-    def add_nodes_from(self, *keys, overwrite=True, **attributes):
+    def add_nodes_from(self, *keys, **attributes):
         """
         Add nodes with 'keys' using 'attributes'.
 
@@ -251,13 +259,13 @@ class Graph(_AttrObject):
         :rtype: set(_Node)
         """
 
-        return {self.add_node(key, overwrite=overwrite, **attributes) for key in keys}
+        return {self.add_node(key, **attributes) for key in keys}
 
     def del_node(self, key):
         """
-        Delete node with 'key'.
+        Delete node with '_key'.
 
-        :param key: node's key.
+        :param key: node's _key.
         :type key: Hashable.
         :return: deleted node.
         :rtype: _Node | None
@@ -286,48 +294,60 @@ class Graph(_AttrObject):
 
         return {self.del_node(key) for key in keys}
 
-    # TODO: Doesn't supports multi graph.
-    def get_edge(self, *key):
+    def get_edge(self, *nodes_keys, multi_id=0):
         """
-        Return graph's edge with 'key', or None if 'key' is not found.
+        Return graph's edge with key=('multi_id', 'nodes_keys') if exists, None otherwise.
 
-        :param key: edge's key.
-        :type key: Iterable[Hashable].
+        :param nodes_keys: edge's nodes keys.
+        :type nodes_keys: Iterable[Hashable].
+        :param multi_id: edge's multi_id identifier.
+        :type multi_id: int
         :return: edge.
         :rtype _Edge | None
         """
 
         try:
-            return self._edges[frozenset(key)]
+            return self._edges[multi_id, frozenset(nodes_keys)]
         except KeyError as err:
-            logger.debug(err)
+            logger.warning(err)
             return None
 
-    def get_edges_from(self, *keys):
+    def get_edges_from(self, *keys, multi=False):
         """
-        Return graph's edges with 'keys', or None for each non existing key.
+        Return graph's edges with 'keys', or None for each non existing _key.
 
+        When searching multi edges, a single key is comprised of a sequence of two elements.
+        First element holds a multiplicity edge indicator.
+        Second element holds edge nodes keys.
         :param keys: edges keys.
-        :type keys: Iterable[Iterable[Hashable]]
+        :type keys: Iterable[Sequence[int, Iterable[Hashable]] | Iterable[Hashable]]
+        :param multi: enable multi edge search.
+        :type multi: bool
         :return: edges
         :rtype: set(_Edge | None)
         """
 
-        return {self.get_edge(*key) for key in keys}
+        try:
+            return {self.get_edge(*key[1:], multi_id=key[0]) if multi else self.get_edge(*key) for key in keys}
+        except (TypeError, IndexError) as err:
+            logger.warning(err)
+            return None
 
-    def set_edge(self, *key, **attributes):
+    def set_edge(self, *nodes_keys, multi_id=0, **attributes):
         """
-         Set edge with 'key' using 'attributes'.
+        Sets graph's edge with key=('multi_id', 'nodes_keys') if exists, using 'attributes'.
 
-         :param key: edge's key.
-         :type key: Iterable[Hashable].
+         :param nodes_keys: edge's nodes keys.
+         :type nodes_keys: Iterable[Hashable].
+         :param multi_id: edge's multi_id identifier.
+         :type multi_id: int
          :param attributes: edge's attributes.
          :type attributes: Mapping.
          :return: edge.
          :rtype: _Edge | None
          """
 
-        edge = self.get_edge(*key)
+        edge = self.get_edge(*nodes_keys, multi_id=multi_id)
 
         try:
             edge.set_attrs(**attributes)
@@ -336,42 +356,44 @@ class Graph(_AttrObject):
 
         return edge
 
-    def set_edges_from(self, *keys, **attributes):
+    def set_edges_from(self, *keys, multi=False,  **attributes):
         """
         Set edges with 'keys' using 'attributes'.
 
         :param keys: edges keys.
-        :type keys: Iterable[Hashable]
+        :type keys: Iterable[Sequence[int, Iterable[Hashable]] | Iterable[Hashable]]
+        :param multi: enable multi edge search.
+        :type multi: bool
         :param attributes: edges attributes.
         :type attributes: Mapping.
         :return: set edges.
         :rtype: Iterable[_Edge]
         """
 
-        return {self.set_edge(*key, **attributes) for key in keys}
+        try:
+            return {self.set_edge(*key[1:], multi_id=key[0], **attributes) if multi else
+                    self.set_edge(*key, **attributes) for key in keys}
+        except (TypeError, IndexError) as err:
+            logger.warning(err)
+            return None
 
-    # TODO: Improve implementation.
-    # TODO: Create a mechanism for users to add 'attributes', handle them and view documentation about them.
-    # TODO: move 'nodes_attributes' & 'multi' from function declaration into 'attributes' handling.
-    # TODO: on setting edge as multi, ensure all other _edges are multi.
-    def add_edge(self, *key, overwrite_nodes=True, nodes_attributes=None, multi=False, overwrite=True, **attributes):
+    def add_edge(self, *nodes_keys, multi_id=0, overwrite_nodes=False, overwrite=True, **attributes):
         """
-        Add edge with 'key'.
+        Add edge with 'nodes_keys'.
 
+        Use 'multi _id' to find specific edge. (use negative number to ensure parallel edge addition)
+        If edge not found, generate sequential 'multi _id' for the added edge.
         Set edge's nodes attributes using 'nodes_attributes'.
         If 'overwrite_nodes' is True, existing nodes attributes will be overwritten.
         Set edge's attributes using 'attributes'.
         If 'overwrite' is True, edge's attributes will be overwritten.
-        If 'multi' is True, allow parallel edges.
 
-        :param key: edge's key.
-        :type key: Iterable[Hashable]
+        :param nodes_keys: edge's _key.
+        :type nodes_keys: Iterable[Hashable]
         :param overwrite_nodes: enable edge's nodes attributes overwriting.
-        :type overwrite_nodes: bool
-        :param nodes_attributes: edge's _nodes attributes.
-        :type nodes_attributes: Mapping | None.
-        :param multi: enable parallel edge.
-        :type multi: bool.
+        :type overwrite_nodes: bool.
+        :param multi_id: edge's multiplicity id.
+        :type multi_id: int
         :param overwrite: enable edge's attributes overwriting.
         :type overwrite: bool
         :param attributes: edge's attributes.
@@ -380,68 +402,152 @@ class Graph(_AttrObject):
         :rtype: _Edge.
         """
 
-        edge = self.set_edge(*key, **attributes) if overwrite else self.get_edge(*key)
+        edge = self.set_edge(*nodes_keys, multi_id=multi_id, **attributes) if overwrite else \
+            self.get_edge(*nodes_keys, multi_id=multi_id)
 
-        if edge is None or multi:
-            existing_nodes = set(self.get_nodes_from(*key))
+        if edge is None:
+            multi_id = self.get_multiplicity(*nodes_keys)
+            existing_nodes = set(self.get_nodes_from(*nodes_keys))
             existing_nodes.discard(None)
-            new_nodes_keys = set(key) - {node.key for node in existing_nodes}
-            new_key = new_nodes_keys | existing_nodes
+            new_nodes_keys = set(nodes_keys) - {node.key for node in existing_nodes}
+            new_nodes = new_nodes_keys | existing_nodes
+            edge = _Edge(new_nodes, multi_id, overwrite_nodes, **attributes)
 
-            edge = _Edge(new_key, overwrite_nodes, nodes_attributes, multi=multi, **attributes)
             self._edges[edge.key] = edge
+            self._edges_multiplicity += Counter({edge.nodes_keys: 1})
             for node in edge.nodes:
                 self._nodes[node.key] = node
 
         return edge
 
-    def add_edges_from(self, *keys, **attributes):
+    def add_edges_from(self, *keys, multi=False, **attributes):
         """
         Add edges with 'keys' using 'attributes'.
 
         :param keys: edges keys.
         :type keys: Iterable[Iterable[Hashable]]
+        :param multi: enable multi edge addition.
+        :type multi: bool
         :param attributes:  edges attributes.
         :type attributes: Iterable[Mapping]
         :return: edges.
         :rtype: set(_Edge)
         """
 
-        return {self.add_edge(*key, **attributes) for key in keys}
+        return {self.add_edge(*key[1:], multi_id=key[0], **attributes) if multi else self.add_edge(*key, **attributes)
+                for key in keys}
 
-    def del_edge(self, *key):
+    def del_edge(self, *nodes_keys, multi_id=0):
         """
-        Delete 'key' edge from graph's edges.
+        Delete '_key' edge from graph's edges.
 
-        :param key: edge's _nodes names.
-        :type key: Iterable[Hashable]
+         If _edges_multiplicity is None, delete of all '_key' sharing child-edges.
+
+        :param nodes_keys: edge's _nodes names.
+        :type nodes_keys: Iterable[Hashable]
+        :param multi_id: enable parallel edges.
+        :type multi_id: int | None
         :return: deleted edge.
         :rtype: _Edge.
         """
 
-        edge = self.get_edge(*key)
+        edge = self.get_edge(*nodes_keys, multi_id=multi_id)
 
         try:
-            for node in edge.nodes:
-                node.del_edge(*key)
+            (node.del_edges(edge) for node in edge.nodes)
         except AttributeError as err:
             logger.debug(err)
         else:
-            del self._edges[edge.key]
+            del self._edges[multi_id, frozenset(nodes_keys)]
+            self._edges_multiplicity -= Counter({edge.nodes_keys: 1})
 
         return edge
 
-    def del_edges_from(self, *keys):
+    def del_edges_from(self, *keys, multi=False):
         """
         Delete edges with 'keys'.
 
         :param keys: edges keys.
         :type keys: Iterable[Iterable[Hashable]]
+        :param multi: enable multi edge deletion.
+        :type multi: bool
         :return: deleted edges.
         :rtype: set(_Edge)
         """
 
-        return {self.del_edge(*key) for key in keys}
+        return {self.del_edge(*key[1:], multi_id=key[0]) if multi else self.del_edge(*key) for key in keys}
+
+    def get_multiplicity(self, *nodes_keys):
+        """
+        Return 'nodes_keys' based multi_id-edge's  multi_id.
+
+        Return None if 'nodes_keys' type is invalid.
+        :param nodes_keys: multi_id-edge's nodes_keys
+        :type nodes_keys: Iterable[Hashable]
+        :return: multi_id of multi_id-edge with 'nodes_keys'
+        :type: int | None
+        """
+
+        try:
+            return self._edges_multiplicity[frozenset(nodes_keys)]
+        except TypeError as err:
+            logger.warning(err)
+            return None
+
+    def get_multi_edge(self, *nodes_keys):
+        """
+        :param nodes_keys: edge's nodes keys.
+        :type nodes_keys: Iterable[Hashable]
+        :return: multi edge (nodes shared set of edges, differed only by multi_id number).
+        :rtype: set(_Edge) | None
+        """
+
+        try:
+            return {self.get_edge(*nodes_keys, multi_id=multi_id) for multi_id in
+                    range(self.get_multiplicity(*nodes_keys))}
+        except TypeError as err:
+            logger.warning(err)
+            return None
+
+    def set_multi_edge(self, *nodes_keys, **attributes):
+        """
+         Set multi edge with 'nodes_keys' using 'attributes'.
+
+         :param nodes_keys: edge's _key.
+         :type nodes_keys: Iterable[Hashable].
+         :param attributes: edge's attributes.
+         :type attributes: Mapping.
+         :return: multi edge (set of edges sharing nodes, differed only by multi_id number).
+         :rtype: set(_Edge) | None
+         """
+
+        multi_edge = self.get_multi_edge(*nodes_keys)
+
+        try:
+            (edge.set_attrs(**attributes) for edge in multi_edge)
+        except (TypeError, AttributeError) as err:
+            logger.warning(err)
+
+        return multi_edge
+
+    def del_multi_edge(self, *nodes_keys):
+        """
+         Delete multi edge with 'nodes_keys'.
+
+         :param nodes_keys: edge's _key.
+         :type nodes_keys: Iterable[Hashable].
+         :return: deleted multi edge.
+         :rtype: set(_Edge) | None
+         """
+
+        multi_edge = self.get_multi_edge(*nodes_keys)
+
+        try:
+            (self.del_edge(edge.key) for edge in multi_edge)
+        except TypeError as err:
+            logger.warning(err)
+
+        return multi_edge
 
     @property
     def nodes(self):
@@ -467,8 +573,7 @@ class _Edge(_AttrObject):
     classdocs
     """
 
-    # TODO: Improve implementation.
-    def __init__(self, nodes, overwrite=True, nodes_attributes=None, **attributes):
+    def __init__(self, nodes, multi_id=0, overwrite=False, nodes_attributes=None, **attributes):
         """
         Construct an edge using 'nodes'.
 
@@ -476,7 +581,7 @@ class _Edge(_AttrObject):
         Set edge's nodes attributes using 'nodes_attributes'.
         Existing nodes attributes will be overwritten.
         Set edge attributes using 'attributes'.
-        Supports: hyper graph, multi graph.
+        Supports: hyper graph, _edges_multiplicity graph.
 
         :param nodes: edge's nodes.
         :type nodes: Iterable[_Node | Hashable]
@@ -485,6 +590,8 @@ class _Edge(_AttrObject):
         :type overwrite: bool
         :param nodes_attributes: edge's nodes attributes.
         :type nodes_attributes: Mapping.
+        :param multi_id: edge's multiplicity identifier.
+        :type multi_id: int
         :param attributes: edge's attributes.
         :type attributes: Mapping.
         """
@@ -496,38 +603,46 @@ class _Edge(_AttrObject):
             raise TypeError("Non empty '_nodes' Iterable[_Node | Hashable] expected,"
                             " got {0}".format(type(nodes).__name__))
 
+        self._multi_id = multi_id
         self._nodes = {node.key: node for node in filter(lambda node: isinstance(node, _Node), nodes)}
 
-        try:
-            if overwrite:
-                for node in self.nodes:
-                    node.set_attrs(**nodes_attributes)
+        if overwrite:
+            self.set_nodes(attributes)
 
+        try:
             self._nodes.update({node_key: _Node(node_key, **nodes_attributes) for node_key in
                                 filter(lambda node: not isinstance(node, _Node), nodes)})
         except TypeError as err:
-            logger.debug(err)
             self._nodes.update({node_key: _Node(node_key) for node_key in
                                 filter(lambda node: not isinstance(node, _Node), nodes)})
+            logger.debug(err)
 
         for node in self.nodes:
-            node.attach_edge(self)
+            node.add_edges(self)
 
     def __str__(self):
         return str(self.id)
 
-    # TODO: Currently returns same as self._nodes. Will be changed when Multi support will be added.
     @property
     def key(self):
         """
-        A key is derived from the keys of edge's nodes.
+        A _key is derived from the keys of edge's nodes.
 
         Another Hashable identifier is added to support MultiGraphs (a  parallel edge).
-        :return: edge's key.
-        :rtype: Iterable[Hashable]
+        :return: edge's _key.
+        :rtype: Sequence[int, Hashable]
         """
 
-        return frozenset(self._nodes.keys())
+        return self.multi_id, self.nodes_keys
+
+    @property
+    def multi_id(self):
+        """
+        :return: edge's multi_id serial nummber.
+        :rtype: int
+        """
+
+        return self._multi_id
 
     @property
     def nodes(self):
@@ -538,7 +653,6 @@ class _Edge(_AttrObject):
 
         return self._nodes.values()
 
-    # TODO: Why I am not using this? check if necessary.
     @property
     def nodes_keys(self):
         """
@@ -546,7 +660,7 @@ class _Edge(_AttrObject):
         :rtype: Iterable[Hashable]
         """
 
-        return self._nodes.keys()
+        return frozenset(self._nodes.keys())
 
     @property
     def is_loop(self):
@@ -557,19 +671,28 @@ class _Edge(_AttrObject):
 
         return True if len(self.nodes) == 1 else False
 
+    def set_nodes(self, attributes):
+        """
+        Set edge's nodes using 'attributes'.
+
+        :param attributes:
+        :type attributes: Mapping
+        :return: None
+        """
+
+        (node.set_attrs(**attributes) for node in self.nodes)
+
 
 class _Node(_AttrObject):
     """
     classdocs
     """
 
-    # TODO: Switch to new syntax with * to declare positional parameters.
-    # TODO: If changed may I use attributes instead of **attributes?
     def __init__(self, key, **attributes):
         """
         Constructor
 
-        :param key: node's key.
+        :param key: node's _key.
         :type key: Hashable
         :param attributes: node's attributes.
         :type attributes: Mapping
@@ -580,11 +703,20 @@ class _Node(_AttrObject):
             raise TypeError("Hashable 'key' expected, got {0}".format(type(key).__name__))
 
         _AttrObject.__init__(self, **attributes)
-        self.key = key
-        self.edges = {}
+        self._key = key
+        self._edges = {}
 
     def __str__(self):
         return str(self.id)
+
+    @property
+    def key(self):
+        """
+        :return: node's key.
+        :rtype: Hashable
+        """
+
+        return self._key
 
     @property
     def edges(self):
@@ -595,23 +727,6 @@ class _Node(_AttrObject):
 
         return self._edges.values()
 
-    @edges.setter
-    def edges(self, edges):
-        """
-        Set node's attribute edges from 'edges'.
-
-        Verifies 'edges' are of the expected type, otherwise return {}.
-        :param edges: edges to be set.
-        :type edges: Iterable[_Edge]
-        :return: None
-        """
-
-        try:
-            self._edges = {edge.key: edge for edge in set(edges)}
-        except (TypeError, AttributeError) as err:
-            self._edges = self._edges if self._edges else {}
-            logger.warning(err)
-
     @property
     def edges_keys(self):
         """
@@ -620,36 +735,6 @@ class _Node(_AttrObject):
         """
 
         return self._edges.keys()
-
-    def attach_edge(self, edge):
-        """
-        Attach 'edge' to node's edges.
-
-        :param edge: edge to be attached.
-        :type edge: _Edge
-        :return: None
-        """
-
-        try:
-            self._edges[edge.key] = edge
-        except AttributeError as err:
-            logger.warning(err)
-
-    def del_edge(self, *key):
-        """
-        Delete 'key' edge from node's edges.
-
-        :param key: edge's key.
-        :type key: Iterable[Hashable]
-        :return: None.
-        """
-
-        try:
-            del self._edges[key]
-        except TypeError as err:
-            logger.warning(err)
-        except KeyError as err:
-            logger.debug(err)
 
     @property
     def degree(self):
@@ -660,3 +745,72 @@ class _Node(_AttrObject):
         """
 
         return len(self.edges) + sum(edge.is_loop for edge in self.edges)
+
+    def add_edges(self, edges):
+        """
+        Add 'edges' to node's edges.
+
+        :param edges: edge to be attached.
+        :type edges: Iterable[_Edge] | _Edge
+        :return: None
+        """
+
+        try:
+            self._edges.update({edge.key: edge for edge in edges})
+        except TypeError:
+            try:
+                self._edges[edges.key] = edges
+            except (TypeError, AttributeError) as err:
+                logger.warning(err)
+            except KeyError as err:
+                logger.debug(err)
+        except AttributeError as err:
+            logger.warning(err)
+
+    def set_edges(self, edges, attributes):
+        """
+        Set 'edges' using 'attributes'.
+
+        :param edges: set edges.
+        :type edges: Iterable[_Edge] | _Edge
+        :param attributes: edge's attributes
+        :type attributes: Mapping
+        """
+
+        try:
+            (self._edges[edge.key].set_attrs(attributes) for edge in edges)
+        except TypeError:
+            try:
+                self._edges[edges.key].set_attrs(attributes)
+            except (TypeError, AttributeError) as err:
+                logger.warning(err)
+            except KeyError as err:
+                logger.debug(err)
+        except AttributeError as err:
+            logger.warning(err)
+        except KeyError as err:
+            logger.debug(err)
+
+    def del_edges(self, edges):
+        """
+        Delete node's 'edges'.
+
+        :param edges: edge's _key.
+        :type edges: Iterable[_Edge] | _Edge
+        :return: None.
+        """
+
+        try:
+            for edge in edges:
+                del self._edges[edge.key]
+        except TypeError:
+            try:
+                del self._edges[edges.key]
+            except (TypeError, AttributeError) as err:
+                logger.warning(err)
+            except KeyError as err:
+                logger.debug(err)
+        except AttributeError as err:
+            logger.warning(err)
+        except KeyError as err:
+            logger.debug(err)
